@@ -3,7 +3,7 @@ import tornado.web
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
-        self.write("Hello, world from aws ecs")
+        self.write("Hello, world kibana")
 
 def make_app():
     return tornado.web.Application([
