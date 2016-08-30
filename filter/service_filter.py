@@ -3,7 +3,6 @@ import asyncio
 def register_api_filter(api, filters = None):
     if filters is None:
         return
-    print(filters)
     [serviceFilter.register_filter(api, filter_func) for filter_func in filters]
 
 class ServiceFilter:

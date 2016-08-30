@@ -33,7 +33,6 @@ class BaseHandler(tornado.web.RequestHandler):
         self.process_response(raw, err)
 
     def parser_request(self):
-        print(self.request.uri)
         uri = urlparse(self.request.uri)
 
         params = dict(
