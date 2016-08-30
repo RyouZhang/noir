@@ -30,43 +30,34 @@ class BaseHandler(tornado.web.RequestHandler):
     async def get(self):
         api, params, context = self.parser_request()
 
-        handler, err = find_api_handler(api)
-        if err is not None:
-            return self.process_response(None, err)      
-        
-        for func in handler.filters():
-            res, err = func(params.get('timestamp', None), params.get('sign', None), params.get('args', dict()), context)
-            if res == False:
-                return self.process_response(None, err)            
-        try:
-            raw, err = await self.exec_handler(handler, params.get('args', None), context)
-            return self.process_response(raw, err)
-        except Exception as e:
-            print('call_api_error %s:%s,%s,%s' % (e, api, params, context))
-            return self.process_response(None, 'Internal_Error')
+        raw, err = await self.exec_api_handler(api, params, context)
+
+        self.process_response(raw, err)
 
 
     async def post(self):
         api, params, context = self.parser_request()
 
+        raw, err = await self.exec_api_handler(api, params, context)
+
+        self.process_response(raw, err)
+
+
+    async def exec_api_handler(self, api, params, context):
         handler, err = find_api_handler(api)
         if err is not None:
-            return self.process_response(None, err)      
+            return None, err    
         
-        for func in handler.filters():
+        for func in handler.filters:
             res, err = func(params.get('timestamp', None), params.get('sign', None), params.get('args', dict()), context)
             if res == False:
-                return self.process_response(None, err)            
+                return None, err           
         try:
-            raw, err = await self.exec_handler(handler, params.get('args', None), context)
-            return self.process_response(raw, err)
+            raw, err = handler.process(params.get('args', dict()), context)
+            return raw, err
         except Exception as e:
-            print('call_api_error %s:%s,%s,%s' % (e, api, args, context))
-            return self.process_response(None, 'Internal_Error')
-
-
-    async def exec_handler(self, handler, args, context):
-        return handler.process(args, context)
+            print('call_api_error %s:%s,%s,%s' % (e, api, params, context))
+            return None, 'Internal_Error'
 
 
     def parser_request(self):
