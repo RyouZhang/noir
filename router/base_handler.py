@@ -8,7 +8,7 @@ import tornado.httpserver
 
 import util
 import filter
-from router.api_handler import ApiHandler
+from router.service_router import serviceRouter
 
 api_router_dic = dict()
 
@@ -19,27 +19,20 @@ def register_api(api, handler):
     api_router_dic[api] = handler
 
 def find_api_handler(api):
-    print(api)
     handler = api_router_dic.get(api, None)
     if handler is None:
         return None, 'Invalid API {}'.format(api)
     return handler, None
 
-
 class BaseHandler(tornado.web.RequestHandler):
     async def get(self):
         api, params, context = self.parser_request()
-
         raw, err = await self.exec_api_handler(api, params, context)
-
         self.process_response(raw, err)
-
 
     async def post(self):
         api, params, context = self.parser_request()
-
         raw, err = await self.exec_api_handler(api, params, context)
-
         self.process_response(raw, err)
 
 
