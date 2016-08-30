@@ -1,9 +1,8 @@
-from router.base_handler import register_api
-from router.api_handler import ApiHandler
+import router
 
-class HelloWorldV2(ApiHandler):
+class HelloWorldV2(router.ApiHandler):
     def process(self, args, context):
         return 'Hello world V2 from ApiHandler', None
 
 
-register_api('hello/v2', HelloWorldV2())
+router.register_api_handler('hello/v2', HelloWorldV2())

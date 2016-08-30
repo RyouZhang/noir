@@ -1,2 +1,2 @@
-from filter.signed_filter import signed_access_filter
-
+from filter.signed_filter import signed_filter
+from filter.service_filter import register_api_filter

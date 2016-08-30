@@ -2,7 +2,11 @@ import math
 
 import util
 
-def signed_access_filter(timestamp, sign, args, context):
+def signed_filter(params, context):
+    timestamp = params.get('timestamp', None)
+    sign = params.get('sign', None)
+    args = params.get('args', dict())
+
     if timestamp is None or math.fabs(timestamp - util.get_timestamp()) > 300000:
         return False, 'Invalid_Timestamp'
     
