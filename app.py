@@ -1,16 +1,33 @@
+import os
+import asyncio
+
 import tornado.ioloop
 import tornado.web
+import tornado.httpserver
 
-class MainHandler(tornado.web.RequestHandler):
-    def get(self):
-        self.write("Hello, world for good job")
+import router
+import api
 
-def make_app():
-    return tornado.web.Application([
-        (r"/", MainHandler),
-    ])
+class FMApplication(tornado.web.Application):
+    def __init__(self):
+        handlers = [
+            (r"/api/.+", router.BaseHandler),
+        ]
+
+        settings = dict(
+            default_handler_class = router.ErrorHandler,
+            compress_response = True
+        )
+
+        super(FMApplication, self).__init__(handlers, **settings)
 
 if __name__ == "__main__":
-    app = make_app()
-    app.listen(8888)
+    port = int(os.getenv('SERVER_PORT', 8888))
+
+    tornado.ioloop.IOLoop.configure('tornado.platform.asyncio.AsyncIOLoop')
+
+    server = tornado.httpserver.HTTPServer(FMApplication())
+    server.bind(port)
+    server.start(0)
+
     tornado.ioloop.IOLoop.current().start()
