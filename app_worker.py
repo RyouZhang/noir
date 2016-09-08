@@ -57,5 +57,4 @@ def main():
 
 
 if __name__ == '__main__':
-    print(hasattr(tornado.ioloop.IOLoop, 'configure'))
     main()
