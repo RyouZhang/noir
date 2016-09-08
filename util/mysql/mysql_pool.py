@@ -7,7 +7,7 @@ class MySqlDBPool():
         self._lock = asyncio.Lock()
         self._poolDic = dict()
     
-    async def get_pool(self, host, port = 3306, user = 'root', password = '', db = 'mysql', loop = None):
+    async def get_pool(self, host, port = 3306, user = 'root', password = '', db = 'mysql'):
         key = 'mysql://%s:%s@%s:%d/%s' % (user, password, host, port, db)
         
         pool = self._poolDic.get(key, None)

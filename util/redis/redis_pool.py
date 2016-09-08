@@ -6,7 +6,7 @@ class RedisDBPool():
         self._lock = asyncio.Lock()
         self._poolDic = dict()
     
-    async def get_pool(self, host, port = 6379, db = 0, password = None, loop = None):
+    async def get_pool(self, host, port = 6379, db = 0, password = None):
         key = 'redis://%s:%d/%d' % (host, port, db)
 
         pool = self._poolDic.get(key, None)
