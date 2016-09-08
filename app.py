@@ -30,5 +30,11 @@ if __name__ == "__main__":
     server.bind(port)
     server.start(1)
 
-    import api
+    services = os.getenv('SERVER_SERVICES', None)
+    if services is None:
+        __import__('service')
+    else:
+        for service in services:
+            __import__(service)
+    
     tornado.ioloop.IOLoop.current().start()
