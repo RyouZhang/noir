@@ -5,4 +5,4 @@ class HelloWorldV2(router.ApiHandler):
         return 'Hello world V2 from ApiHandler', None
 
 
-router.register_api_handler('hello/v2', HelloWorldV2())
+router.register_api_handler('/api/hello/v2', HelloWorldV2())
