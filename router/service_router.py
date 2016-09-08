@@ -1,4 +1,7 @@
 import asyncio
+import functools
+
+import tornado.ioloop
 
 from router.api_handler import ApiHandler
 
@@ -17,14 +20,20 @@ class ServiceRouter:
         else:
             assert('Dupilicate Api %s: %s | %s' % (api, temp, handler))
 
-    async def async_call_api(self, api, args, context):
+    async def async_call_api(self, api, args, context, timeout = None):
         try:
             handler = self.api_router_dic.get(api, None)
             if handler is None:
                 # todo discovery remote service
                 return None, 'Invalid API {}'.format(api)
 
-            return handler.process(args, context)
+            async_task = asyncio.ensure_future(handler.process(args, context), loop = asyncio.get_event_loop())
+            try:
+                (res, err) = await asyncio.wait_for(async_task, timeout, loop = asyncio.get_event_loop())
+                return res, err
+            except asyncio.TimeoutError:
+                async_task.cancel()
+                return None, 'Time_out'
         except Exception as e:
             print('call_api_error %s:%s,%s,%s' % (e, api, args, context))
             return None, 'Internal_Error'

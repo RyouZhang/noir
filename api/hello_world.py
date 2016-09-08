@@ -1,10 +1,14 @@
 import router
-import filter
+import rule
+import functools
 
 class HelloWorld(router.ApiHandler):
-    def process(self, args, context):
+    async def process(self, args, context):
         return 'Hello world from ApiHandler', None
 
 
-filter.register_api_filter('/api/hello/v1', [filter.signed_filter])
+rule.register_api_rule(
+    '/api/hello/v1', 
+    [functools.partial(rule.api_signed_rule, None)])
+        
 router.register_api_handler('/api/hello/v1', HelloWorld())

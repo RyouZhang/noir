@@ -1,4 +1,5 @@
 import time
+import json
 import asyncio
 from urllib.parse import urlparse
 
@@ -8,14 +9,14 @@ import tornado.httpserver
 
 import util
 
-from filter.service_filter import serviceFilter
+from rule.rule_manager import ruleManager
 from router.service_router import serviceRouter
 
 class BaseHandler(tornado.web.RequestHandler):
     async def get(self):
         api, params, context = self.parser_request()
 
-        result, err = await serviceFilter.check_api_filter(api, params, context)
+        result, err = await ruleManager.check_api_rule(api, params, context)
         if result == False and err is not None:
             return self.process_response(None, err)
 
@@ -25,7 +26,7 @@ class BaseHandler(tornado.web.RequestHandler):
     async def post(self):
         api, params, context = self.parser_request()
 
-        result, err = await serviceFilter.check_api_filter(api, params, context)
+        result, err = await ruleManager.check_api_rule(api, params, context)
         if result == False and err is not None:
             return self.process_response(None, err)
 
@@ -35,8 +36,14 @@ class BaseHandler(tornado.web.RequestHandler):
     def parser_request(self):
         uri = urlparse(self.request.uri)
 
+        args = self.get_argument('args', None)
+        if args is None:
+            args = dict()
+        else:
+            args = json.loads(args)
+
         params = dict(
-            args = self.get_argument('args', dict()),
+            args = args,
             timestamp = float(self.get_argument('e', '0.0')),
             sign = self.get_argument('sign', None))
         
@@ -50,7 +57,7 @@ class BaseHandler(tornado.web.RequestHandler):
     def process_response(self, raw, err):
         if err is None:
             self.set_header('HTTP_X_FIVEMILES_CODE', 0)
-            self.write(raw)
+            self.write(json.dumps(raw))
         else:
             self.set_header('HTTP_X_FIVEMILES_CODE', 500)
             self.write(err.encode('utf-8'))

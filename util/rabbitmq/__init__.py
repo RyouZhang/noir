@@ -1,0 +1,1 @@
+from util.rabbitmq.asyncio_consumer import AsyncConsumer

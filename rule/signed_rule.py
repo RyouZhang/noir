@@ -2,7 +2,7 @@ import math
 
 import util
 
-def signed_filter(params, context):
+def api_signed_rule(conf, params, context):
     timestamp = params.get('timestamp', None)
     sign = params.get('sign', None)
     args = params.get('args', dict())
