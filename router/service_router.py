@@ -6,7 +6,6 @@ import tornado.ioloop
 from router.api_handler import ApiHandler
 
 def register_api_handler(api, handler):
-    print(api, handler)
     serviceRouter.register_api(api, handler)
 
 class ServiceRouter:

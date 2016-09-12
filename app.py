@@ -29,7 +29,7 @@ if __name__ == "__main__":
 
     server = tornado.httpserver.HTTPServer(FMApplication())
     server.bind(port)
-    server.start(1)
+    server.start(process_num)
 
     import service
 

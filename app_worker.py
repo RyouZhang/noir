@@ -27,11 +27,9 @@ loop = asyncio.get_event_loop()
 def on_message_callback_finish(client, t, tag, f):
     t.cancel()
     (res, msg) = f.result()
-    print(res, msg, threading.current_thread())
     client.acknowledge_message(tag)
 
 def test_timeout(h):
-    print(h, threading.current_thread())
     if h.done():
         print('success')
     else:

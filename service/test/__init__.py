@@ -4,6 +4,7 @@ __all__ = (
     'hello_world',
     'hello_world_v2',
     'push_message',
+    'http_proxy_v1',
 )
 
 services = os.getenv('SERVICES', None)
