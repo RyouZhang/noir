@@ -17,8 +17,9 @@ class StockInfoV1(router.ApiHandler):
         
         stock = None
         try:
-            redis_pool = await RedisPool.get_pool('192.168.1.19', 6379, db = 0)
+            redis_pool = await RedisPool.get_pool('192.168.1.19', 6379)
             async with redis_pool.get() as redis:
+                await redis.select(0)
                 res = await redis.get(symbol_code)
                 if res:
                     try:
@@ -37,6 +38,7 @@ class StockInfoV1(router.ApiHandler):
                         return None, 'Invalid_Symbol'
 
             async with redis_pool.get() as redis:
+                await redis.select(0)
                 try:
                     raw = json.dumps(stock)
                     await redis.set(symbol_code, raw)

@@ -1,1 +1,2 @@
 from util.rabbitmq.asyncio_consumer import AsyncConsumer
+from util.rabbitmq.rabbitmq_pool import rabbitMQPool

@@ -14,7 +14,7 @@ from util.rabbitmq import AsyncConsumer
 
 async def test_example(loop, body):
     res = None   
-    mysql_pool = await MySQLPool.get_pool('192.168.1.19', user = 'root', password = '123', db = 'stock', loop = loop)
+    mysql_pool = await MySQLPool.get_pool('192.168.1.19', user = 'root', password = '123', db = 'stock')
     async with mysql_pool.acquire() as conn:
         async with conn.cursor() as cur:
             await cur.execute("SELECT count(*) from symbols")
@@ -52,8 +52,10 @@ def main():
         ioloop = loop)
     try:
         example.run()
+        loop.run_forever()
     except KeyboardInterrupt:
         example.stop()
+        loop.stop()
 
 
 if __name__ == '__main__':

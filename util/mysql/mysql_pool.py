@@ -2,6 +2,7 @@ import asyncio
 import pymysql
 import aiomysql
 
+# MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PWD, MYSQL_DB
 class MySqlDBPool():
     def __init__(self):
         self._lock = asyncio.Lock()

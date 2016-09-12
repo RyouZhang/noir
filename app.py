@@ -5,11 +5,10 @@ import tornado.ioloop
 import tornado.web
 import tornado.httpserver
 
-import router
-import service
-
 tornado.ioloop.IOLoop.configure('tornado.platform.asyncio.AsyncIOLoop')
 asyncio.get_event_loop = lambda : tornado.ioloop.IOLoop.current().asyncio_loop
+
+import router
 
 class FMApplication(tornado.web.Application):
     def __init__(self):
@@ -30,6 +29,8 @@ if __name__ == "__main__":
 
     server = tornado.httpserver.HTTPServer(FMApplication())
     server.bind(port)
-    server.start(process_num)
-    
+    server.start(1)
+
+    import service
+
     tornado.ioloop.IOLoop.current().start()

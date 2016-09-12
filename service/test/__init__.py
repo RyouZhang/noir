@@ -3,6 +3,7 @@ import os
 __all__ = (
     'hello_world',
     'hello_world_v2',
+    'push_message',
 )
 
 services = os.getenv('SERVICES', None)

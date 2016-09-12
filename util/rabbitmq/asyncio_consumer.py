@@ -122,10 +122,8 @@ class AsyncConsumer(object):
 
     def run(self):
         self._connection = self.connect()
-        self._connection.ioloop.run_forever()
 
     def stop(self):
         self._closing = True
         self.stop_consuming()
-        self._connection.ioloop.stop()
 
