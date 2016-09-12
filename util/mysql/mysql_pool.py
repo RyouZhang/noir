@@ -12,9 +12,13 @@ class MySqlDBPool():
         key = 'mysql://%s:%s@%s:%d/%s' % (user, password, host, port, db)
         
         pool = self._poolDic.get(key, None)
-        if pool is None:
-            try:
-                await self._lock.acquire()
+        if pool is not None:
+            return pool 
+        
+        try:
+            await self._lock.acquire()
+            pool = self._poolDic.get(key, None)
+            if pool is None:
                 pool = await aiomysql.create_pool(
                         host = host,
                         port = port,
@@ -26,8 +30,8 @@ class MySqlDBPool():
                         connect_timeout = 5,
                         loop = asyncio.get_event_loop())
                 self._poolDic[key] = pool
-            finally:
-                self._lock.release()
+        finally:
+            self._lock.release()
         return pool
 
 MySQLPool = MySqlDBPool()

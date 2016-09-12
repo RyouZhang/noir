@@ -6,7 +6,7 @@ from pika import adapters
 from pika.adapters import base_connection
 
 
-class AsyncConnection(base_connection.BaseConnection):
+class AsyncioConnection(base_connection.BaseConnection):
 
     def __init__(self,
                  parameters = None,
@@ -22,7 +22,7 @@ class AsyncConnection(base_connection.BaseConnection):
         else:
             self.ioloop = ioloop
 
-        super(AsyncConnection, self).__init__(
+        super(AsyncioConnection, self).__init__(
             parameters,
             on_open_callback,
             on_open_error_callback,
@@ -31,23 +31,23 @@ class AsyncConnection(base_connection.BaseConnection):
             stop_ioloop_on_close)
     
     def _adapter_connect(self):
-        err = super(AsyncConnection, self)._adapter_connect()
+        err = super(AsyncioConnection, self)._adapter_connect()
         if not err:
             self.ioloop.add_reader(self.socket.fileno(), self.read_data)
             self.ioloop.add_writer(self.socket.fileno(), self.write_data)
         return err
     
     def read_data(self):
-        super(AsyncConnection, self)._handle_events(self.socket.fileno(), self.event_state, None, False)
+        super(AsyncioConnection, self)._handle_events(self.socket.fileno(), self.event_state, None, False)
     
     def write_data(self):
-        super(AsyncConnection, self)._handle_events(self.socket.fileno(), self.event_state, None, False)
+        super(AsyncioConnection, self)._handle_events(self.socket.fileno(), self.event_state, None, False)
 
     def _adapter_disconnect(self):
         if self.socket:
             self.ioloop.remove_reader(self.socket.fileno())
             self.ioloop.remove_writer(self.socket.fileno())
-        super(AsyncConnection, self)._adapter_disconnect()
+        super(AsyncioConnection, self)._adapter_disconnect()
     
     def add_timeout(self, deadline, callback_method):
         return self.ioloop.call_later(deadline, callback_method)

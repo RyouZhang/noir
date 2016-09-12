@@ -11,6 +11,7 @@ import aiomysql
 
 from util.mysql import MySQLPool
 from util.rabbitmq import AsyncConsumer
+import util.rabbitmq.asyncio_connection
 
 async def test_example(loop, body):
     res = None   
@@ -49,6 +50,7 @@ def main():
         queue_name = 'text_1',
         routing_key = 'example.text.3', 
         message_callback = on_message_callback,
+        connection_class = util.rabbitmq.asyncio_connection.AsyncioConnection,
         ioloop = loop)
     try:
         example.run()

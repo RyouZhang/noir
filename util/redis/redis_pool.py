@@ -11,9 +11,13 @@ class RedisDBPool():
         key = 'redis://%s:%d' % (host, port)
 
         pool = self._poolDic.get(key, None)
-        if pool is None:
-            try:
-                await self._lock.acquire()
+        if pool is not None:
+            return pool
+        
+        try:
+            await self._lock.acquire()
+            pool = self._poolDic.get(key, None)
+            if pool is None:
                 pool = await aioredis.create_pool(
                     (host, port),
                     password = password,
@@ -21,8 +25,8 @@ class RedisDBPool():
                     maxsize = 16,
                     loop = asyncio.get_event_loop())
                 self._poolDic[key] = pool
-            finally:
-                self._lock.release()
+        finally:
+            self._lock.release()
         return pool
 
 RedisPool = RedisDBPool()
