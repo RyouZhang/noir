@@ -53,7 +53,7 @@ def main():
         connection_class = util.rabbitmq.asyncio_connection.AsyncioConnection,
         ioloop = loop)
     try:
-        example.run()
+        example.connect()
         loop.run_forever()
     except KeyboardInterrupt:
         example.stop()
