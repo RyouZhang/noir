@@ -10,9 +10,8 @@ async def async_http(method, url, headers = dict(), body = None):
                     url = url, 
                     headers = headers,
                     data = body) as resp:
-                    body = await resp.read()
-                    return resp.status, resp.reason, resp.headers, body,
-        except aiohttp.errors.ClientTimeoutError:
+                    return resp, None
+        except aiohttp.errors.TimeoutError:
             return None, 'Timeout'
         except Exception as e:
             return None, e
