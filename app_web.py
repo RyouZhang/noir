@@ -19,4 +19,6 @@ if __name__ == '__main__':
     try:
         loop.run_forever()
     except KeyboardInterrupt:
-        pass
+        srv.close()
+        loop.run_until_complete(srv.wait_closed())
+    loop.close()
