@@ -1,3 +1,4 @@
+import json
 import router
 
 import pika.adapters
@@ -7,8 +8,13 @@ class PushMessage(router.ApiHandler):
     async def process(self, args, context):
         publisher = await util.rabbitmq.rabbitMQPool.get_publisher(
                 'amqp://192.168.1.19:5672/')
+
+        msg = dict(
+            api = '/api/stock/info/v1',
+            args = json.dumps(dict(symbol='MSFT'))
+        )
         publisher.publish_message(
-            body = 'Hello world from PushMessage', 
+            body = json.dumps(msg),
             exchange = 'message',
             routing_key = 'example.text.3')
         return 'Hello world from PushMessage', None

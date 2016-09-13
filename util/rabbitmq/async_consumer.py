@@ -4,7 +4,7 @@ import asyncio
 import pika
 from pika import adapters
 from pika.adapters import base_connection
-import util.rabbitmq.asyncio_connection
+from util.rabbitmq.asyncio_connection import AsyncioConnection
 
 
 class AsyncConsumer(object):
@@ -36,9 +36,8 @@ class AsyncConsumer(object):
         self._message_callback = message_callback
     
     def connect(self):
-        print(self._connection_class)
         if self._connection_class is None:
-            return None
+            self._connection_class = AsyncioConnection
         return self._connection_class(
             parameters = pika.URLParameters(self._url), 
             on_open_callback = self.on_connection_open, 

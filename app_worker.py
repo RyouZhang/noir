@@ -1,62 +1,49 @@
 import time
 import asyncio
 import functools
-import threading
+import json
 
-import pika
-from pika import adapters
-from pika.adapters import base_connection
+import router
+import service
 
-import aiomysql
-
-from util.mysql import MySQLPool
 from util.rabbitmq import AsyncConsumer
 import util.rabbitmq.asyncio_connection
 
-async def test_example(loop, body):
-    res = None   
-    mysql_pool = await MySQLPool.get_pool('192.168.1.19', user = 'root', password = '123', db = 'stock')
-    async with mysql_pool.acquire() as conn:
-        async with conn.cursor() as cur:
-            await cur.execute("SELECT count(*) from symbols")
-            (res,) = await cur.fetchone()
-    return '%s|%s' % (body,res), 'good'
-
-loop = asyncio.get_event_loop()
-
-def on_message_callback_finish(client, t, tag, f):
-    t.cancel()
-    (res, msg) = f.result()
-    client.acknowledge_message(tag)
-
-def test_timeout(h):
-    if h.done():
-        print('success')
-    else:
-        print('time out')
+def on_message_callback_finish(consumer, timer, tag, task):
+    if timer is not None:
+        timer.cancel()
+    (res, err) = task.result()
+    print(res, err)
+    consumer.acknowledge_message(tag)
 
 def on_message_callback(consumer, delivery_tag, body):
-    t = asyncio.ensure_future(test_example(loop, body), loop = loop)
-    x = loop.call_later(10, functools.partial(test_timeout, t))
-    t.add_done_callback(functools.partial(on_message_callback_finish, consumer, x, delivery_tag))
+    try:
+        message = json.loads(body.decode('UTF-8'))
+        api = message.get('api', None)
+        if api is None:
+            consumer.acknowledge_message(delivery_tag)
+        else:
+            args = json.loads(message.get('args', '{}'))
+            context = message.get('context', dict())
+            task = asyncio.ensure_future(router.serviceRouter.async_call_api(api, args, context, timeout = 10))
+            task.add_done_callback(functools.partial(on_message_callback_finish, consumer, None, delivery_tag))
+    except Exception as e:
+        print('on_message_callback', e)
 
-def main():
-    example = AsyncConsumer(
+if __name__ == '__main__':
+    loop = asyncio.get_event_loop()
+    consumer = AsyncConsumer(
         'amqp://192.168.1.19:5672/',
+        connection_class = None,
         exchange_name = 'message',
         exchange_type = 'topic',
         queue_name = 'text_1',
         routing_key = 'example.text.3', 
         message_callback = on_message_callback,
-        connection_class = util.rabbitmq.asyncio_connection.AsyncioConnection,
         ioloop = loop)
     try:
-        example.connect()
+        consumer.connect()
         loop.run_forever()
     except KeyboardInterrupt:
-        example.stop()
+        consumer.stop()
         loop.stop()
-
-
-if __name__ == '__main__':
-    main()
