@@ -8,10 +8,22 @@ import aiohttp.server
 from aiohttp import MultiDict
 
 import router
+import rule
 import service
-from router.service_router import serviceRouter
+
 
 class HttpRequestHandler(aiohttp.server.ServerHttpProtocol):
+
+    async def handle_request(self, message, payload):
+        api, params, context = await self.parser_request(message, payload)
+
+        result, err = await rule.ruleManager.check_api_rule(api, params, context)
+        if result == False and err is not None:
+            await self.process_response(message, None, err)
+        else:
+            raw, err = await router.serviceRouter.async_call_api(api, params['args'], context, timeout = 5)
+            await self.process_response(message, raw, err)
+
     async def parser_request(self, message, payload):
         url_info = urlparse(message.path)
         path = url_info.path
@@ -39,12 +51,9 @@ class HttpRequestHandler(aiohttp.server.ServerHttpProtocol):
             User_Id = message.headers.get('HTTP_X_FIVEMILES_USER_ID', None),
             User_Token = message.headers.get('HTTP_X_FIVEMILES_USER_TOKEN', None)
         )
-        return path, context, params
+        return path, params, context
 
-    async def handle_request(self, message, payload):
-        path, context, params = await self.parser_request(message, payload)
-
-        raw, err = await serviceRouter.async_call_api(path, params['args'], context, timeout = 5)
+    async def process_response(self, message, raw, err):
         response = aiohttp.Response(
             self.writer, 200, http_version = message.version
         )
@@ -58,6 +67,7 @@ class HttpRequestHandler(aiohttp.server.ServerHttpProtocol):
         else:
             response.write(err.encode('utf-8'))
         await response.write_eof()
+
 
 if __name__ == '__main__':
     port = os.getenv('SERVER_PORT', '8080')
