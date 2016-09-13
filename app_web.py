@@ -45,7 +45,6 @@ class HttpRequestHandler(aiohttp.server.ServerHttpProtocol):
         path, context, params = await self.parser_request(message, payload)
 
         raw, err = await serviceRouter.async_call_api(path, params['args'], context, timeout = 5)
-
         response = aiohttp.Response(
             self.writer, 200, http_version = message.version
         )
