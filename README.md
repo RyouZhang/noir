@@ -1,2 +1,2 @@
 # nori
-A python tornado web service sample
+A python web service sample base on aiohttp
