@@ -3,6 +3,7 @@ import functools
 
 import pika.adapters
 from util.rabbitmq.async_publisher import AsyncPublisger
+from util.rabbitmq.asyncio_connection import AsyncioConnection
 
 # AMPQ_URL
 class RabbitMQPool():
@@ -11,6 +12,9 @@ class RabbitMQPool():
         self._clientDic = dict()
     
     async def get_publisher(self, url, connection_class = None):
+        if connection_class is None:
+            connection_class = AsyncioConnection
+
         key = '%s' % (url)
         client = self._clientDic.get(key, None)
         if client is not None:
@@ -25,7 +29,7 @@ class RabbitMQPool():
                 client = AsyncPublisger(
                     url,
                     ioloop = asyncio.get_event_loop(),
-                    connection_class = pika.adapters.TornadoConnection)
+                    connection_class = connection_class)
             client.connect()
             self._clientDic[key] = client
         finally:

@@ -1,7 +1,6 @@
 import aiohttp
 
 import router
-
 import util.http
 
 class HttpProxyV1(router.ApiHandler):

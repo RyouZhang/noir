@@ -1,8 +1,6 @@
 import asyncio
 import functools
 
-import tornado.ioloop
-
 from router.api_handler import ApiHandler
 
 def register_api_handler(api, handler):
