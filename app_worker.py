@@ -9,6 +9,9 @@ import service
 from util.rabbitmq import AsyncConsumer
 import util.rabbitmq.asyncio_connection
 
+import uvloop
+asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
 def on_message_callback_finish(consumer, timer, tag, task):
     if timer is not None:
         timer.cancel()

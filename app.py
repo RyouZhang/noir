@@ -10,6 +10,9 @@ import rule
 import service
 import entry
 
+import uvloop
+asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+    
 async def parser_request(request):
     args = {}
     if request.method == 'GET':
@@ -34,7 +37,7 @@ async def parser_request(request):
         User_Id = request.headers.get('HTTP_X_FIVEMILES_USER_ID', None),
         User_Token = request.headers.get('HTTP_X_FIVEMILES_USER_TOKEN', None)
     )
-    return '/' + request.match_info['api'], params, context
+    return '/'+ request.match_info['api'], params, context
 
 async def handler(request):
     api, params, context = await parser_request(request)
@@ -58,9 +61,18 @@ def process_response(request, raw, err):
         response.body = err.encode('utf-8')
     return response
 
+class TestUrlDispatcher(web.UrlDispatcher):
+    async def resolve(self, request):
+
+        return dict(
+            api = request.path,
+            handler = handler
+        )
+
+
 if __name__ == '__main__':
     port = os.getenv('SERVER_PORT', '8080')
 
-    app = web.Application()
+    app = web.Application(middlewares = [])
     app.router.add_route('*', '/{api:.+}', handler)
     web.run_app(app)

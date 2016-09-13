@@ -6,6 +6,9 @@ import rule
 import service
 import entry
 
+import uvloop
+asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
 if __name__ == '__main__':
     port = os.getenv('SERVER_PORT', '8080')
 
