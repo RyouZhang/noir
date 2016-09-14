@@ -60,12 +60,12 @@ class HttpRequestHandler(aiohttp.server.ServerHttpProtocol):
         accept_encoding = message.headers.get('accept-encoding', '').lower()
         if 'gzip' in accept_encoding:
             response.add_header('Content-Encoding', 'gzip')
-            response.add_compression_filter('gzip')        
+            response.add_compression_filter('gzip')    
+            response.add_chunking_filter(8192)    
         elif 'deflate' in accept_encoding:
             response.add_header('Content-Encoding', 'deflate')
             response.add_compression_filter('deflate')
-        
-        response.add_chunking_filter(1024)
+            response.add_chunking_filter(8192)
 
         output_raw = None
         if err is None:
