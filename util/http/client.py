@@ -1,12 +1,10 @@
 import asyncio
 import aiohttp
 
-from aiohttp.resolver import AsyncResolver
 
 async def async_http(method, url, headers = dict(), body = None):
-    resolver = AsyncResolver(nameservers=['8.8.8.8', '8.8.4.4'])
     with aiohttp.ClientSession(
-        connector = aiohttp.TCPConnector(limit = 32, resolver = resolver),
+        connector = aiohttp.TCPConnector(limit = 32),
         loop = asyncio.get_event_loop()) as session:
         try:
             with aiohttp.Timeout(5):

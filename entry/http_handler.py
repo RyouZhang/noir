@@ -80,5 +80,5 @@ class HttpRequestHandler(aiohttp.server.ServerHttpProtocol):
 
         response.write(output_raw)
         await response.write_eof()
-        if response.keep_alive():
-            self.keep_alive(True)
+        # if response.keep_alive():
+            # self.keep_alive(True)
