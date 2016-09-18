@@ -7,7 +7,6 @@ import aiohttp.server
 from aiohttp import MultiDict
 
 import router
-import rule
 import service
 
 class HttpRequestHandler(aiohttp.server.ServerHttpProtocol):
@@ -15,12 +14,8 @@ class HttpRequestHandler(aiohttp.server.ServerHttpProtocol):
     async def handle_request(self, message, payload):
         api, params, context = await self.parser_request(message, payload)
 
-        result, err = await rule.ruleManager.check_api_rule(api, params, context)
-        if result == False and err is not None:
-            await self.process_response(message, None, err)
-        else:
-            raw, err = await router.serviceRouter.async_call_api(api, params['args'], context, timeout = 5)
-            await self.process_response(message, raw, err)
+        raw, err = await router.serviceRouter.async_call_api(api, params, context, timeout = 5)
+        await self.process_response(message, raw, err)
 
     async def parser_request(self, message, payload):
         url_info = urlparse(message.path)
@@ -36,19 +31,14 @@ class HttpRequestHandler(aiohttp.server.ServerHttpProtocol):
         for (k,v) in pairs:
             args[k] = v
         
-        params = dict(
-            sign = args.get('sign', None),
-            e = args.get('e', 0),
-        )
-        if args.get('args', None) is not None:
-            params['args'] = json.loads(args['args'])
-        else:
-            params['args'] = dict()
-
         context = dict(
-            User_Id = message.headers.get('HTTP_X_FIVEMILES_USER_ID', None),
-            User_Token = message.headers.get('HTTP_X_FIVEMILES_USER_TOKEN', None)
+            sign = args.get('sign', None),
+            timestamp = args.get('e', 0),
+            user_id = message.headers.get('HTTP_X_FIVEMILES_USER_ID', None),
+            user_token = message.headers.get('HTTP_X_FIVEMILES_USER_TOKEN', None)
         )
+        params = json.loads(args.get('args', '{}'))
+        
         return path, params, context
 
     async def process_response(self, message, raw, err):

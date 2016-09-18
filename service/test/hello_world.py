@@ -6,9 +6,7 @@ class HelloWorld(router.ApiHandler):
     async def process(self, args, context):
         return 'Hello world from ApiHandler', None
 
-
-rule.register_api_rule(
+router.register_api_handler(
     '/api/hello/v1', 
-    [functools.partial(rule.api_signed_rule, None)])
-        
-router.register_api_handler('/api/hello/v1', HelloWorld())
+    HelloWorld(), 
+    rule_func = functools.partial(rule.api_signed_rule, None))
