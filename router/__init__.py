@@ -1,4 +1,4 @@
 from router.api_handler import ServiceHandler
-from router.service_router import register_api_handler
-from router.service_rewrite import register_api_rewrite
+from router.service_router import register_service_handler
+from router.service_rewrite import register_service_rewrite
 from router.service_router import service_router

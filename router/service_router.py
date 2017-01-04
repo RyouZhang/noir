@@ -9,54 +9,55 @@ from router.service_handler import ServiceHandler
 from router.service_rewrite import service_rewrite
 
 __all__ = [
-    'register_api_handler',
+    'register_service_handler',
     'service_router'
 ]
 
 MAX_RWERITE_DEEP = 3
 
-def register_api_handler(api, handler, rule_func=None):
-    service_router._register_api(api, handler, rule_func)
+def register_service_handler(path, handler, rule_func=None):
+    service_router._register_service(path, handler, rule_func)
 
 class ServiceRouter:
     
     def __init__(self, max_rewrite_deep=MAX_RWERITE_DEEP):
-        self._api_router_dic = dict()
+        self._router_dic = dict()
 
 
-    def _register_api(self, api, handler, rule_func):
-        if False == handler is ApiHandler:
-            assert('Invalid Api Handler %s|%s' % (api, handler))
-        temp = self._api_router_dic.get(api, None)
+    def _register_service(self, path, handler, rule_func):
+        if False == handler is ServiceHandler:
+            assert('Invalid Service Handler %s|%s' % (path, handler))
+
+        temp = self._router_dic.get(path, None)
         if temp is None:
-            self._api_router_dic[api] = (rule_func, handler)
+            self._router_dic[path] = (rule_func, handler)
         else:
-            assert('Dupilicate Api %s: %s | %s' % (api, temp, handler))
+            assert('Dupilicate Service %s: %s | %s' % (path, temp, handler))
         
-        util.logger.info('register api %s handler %s', api, handler)
+        util.logger.info('Register Service %s Handler %s', path, handler)
 
 
-    async def async_call_api(self, api, args, context, timeout=None):
+    async def async_call_api(self, path, args, context, timeout=None):
         try:
-            api, args, context = await service_rewrite.async_rewrite_api(api, args, context)
+            path, args, context = await service_rewrite.async_rewrite_service(path, args, context)
 
-            (rule_func, handler) = self._api_router_dic.get(api, (None, None))
+            (rule_func, handler) = self._router_dic.get(path, (None, None))
             if handler is None:
                 # todo discovery remote service
-                util.logger.warning('invalid_api %s,%s,%s', api, args, context, exc_info=True)
-                return None, 'Invalid API {}'.format(api)
+                util.logger.warning('invalid_service %s,%s,%s', path, args, context, exc_info=True)
+                return None, 'Invalid Service {}'.format(path)
 
             if rule_func is not None:
                 result, err = await rule_func(args, context)
                 if err is not None:
-                    util.logger.warning('call_api_rule_error %s,%s,%s,%s', err, api, args, context, exc_info=True)
+                    util.logger.warning('call_service_rule_error %s,%s,%s,%s', err, path, args, context, exc_info=True)
                     return None, err
   
             async_task = asyncio.ensure_future(handler.process(args, context), loop=asyncio.get_event_loop())
             try:
                 (res, err) = await asyncio.wait_for(async_task, timeout, loop=asyncio.get_event_loop())
                 if err is not None:
-                    util.logger.error('call_api_error %s,%s,%s,%s', err, api, args, context, exc_info=True)
+                    util.logger.error('call_api_error %s,%s,%s,%s', err, path, args, context, exc_info=True)
                 return res, err
             except asyncio.TimeoutError:
                 if async_task is not None and not async_task.cancelled():
@@ -64,7 +65,7 @@ class ServiceRouter:
                 return None, 'Time_out'
 
         except Exception as e:
-            util.logger.error('call_api_exception %s,%s,%s,%s', e, api, args, context, exc_info=True)
+            util.logger.error('call service exception %s,%s,%s,%s', e, path, args, context, exc_info=True)
             return None, 'Internal_Error'
 
 

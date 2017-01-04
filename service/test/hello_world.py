@@ -2,7 +2,7 @@ import router
 import rule
 import functools
 
-class HelloWorld(router.ApiHandler):
+class HelloWorld(router.SericeHandler):
     async def process(self, args, context):
         return 'Hello world from ApiHandler', None
 
