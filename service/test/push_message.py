@@ -5,7 +5,7 @@ import router
 import pika.adapters
 import util.rabbitmq
 
-class PushMessage(router.SericeHandler):
+class PushMessage(router.ServiceHandler):
     def __init__(self):
         self._ampq_url = os.getenv('AMPQ_URL', None)
         super(PushMessage, self).__init__()
@@ -27,4 +27,4 @@ class PushMessage(router.SericeHandler):
             routing_key = 'example.text.3')
         return 'Hello world from PushMessage', None
         
-router.register_api_handler('/api/push/message/v1', PushMessage())
+router.register_service_handler('/api/push/message/v1', PushMessage())

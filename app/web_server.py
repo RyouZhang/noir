@@ -36,7 +36,7 @@ class ServerConfig:
 
     def set_keep_alive_timeout(self, flag):
         self.keep_alive_timeout = flag
-        return
+        return self
 
     def add_service(self, service_module):
         if service_module is type(list):
@@ -50,8 +50,9 @@ class ServerConfig:
         return self
 
 
+workers = []
+
 def run_web_server(config, process_num=mp.cpu_count()):
-    workers = []
     for i in range(process_num):
         workers.append(create_worker(config))
 
@@ -59,7 +60,7 @@ def run_web_server(config, process_num=mp.cpu_count()):
         worker.start()
 
     loop = asyncio.get_event_loop()
-    loop.call_later(WORKER_MONITOR_TIME, on_timer_callback, (workers,config,))
+    loop.call_later(WORKER_MONITOR_TIME, on_timer_callback, config)
     try:
         loop.run_forever()
     except KeyboardInterrupt:
@@ -80,14 +81,14 @@ def launch_server(config):
         importlib.import_module(service_name)
 
     loop = asyncio.get_event_loop()
-    server = loop.create_server(
-        lambda: config.handler_class(
-            debug=False,
+    f = loop.create_server(
+        lambda: entry.HttpRequestHandler(
+            debug=True,
             tcp_keepalive=config.keep_alive,
             keepalive_timeout=config.keep_alive_timeout),
         '0.0.0.0', config.port, reuse_port=True)
 
-    srv = loop.run_until_complete(server)
+    srv = loop.run_until_complete(f)
 
     util.logger.info('server on %s', srv.sockets[0].getsockname())
     try:
@@ -99,10 +100,10 @@ def launch_server(config):
 
 
 def create_worker(config):
-    return mp.Process(target=launch_server, args=(config))
+    return mp.Process(target=launch_server, args=(config,))
 
 
-def on_timer_callback(workers, config):
+def on_timer_callback(config):
     dead_works = []
     for worker in workers:
         if worker.is_alive() is False:
@@ -119,4 +120,4 @@ def on_timer_callback(workers, config):
         util.logger.info('the worker %s restart (pid:%s)', worker.name, worker.pid)
 
     loop = asyncio.get_event_loop()
-    loop.call_later(WORKER_MONITOR_TIME, on_timer_callback, (workers, config))
+    loop.call_later(WORKER_MONITOR_TIME, on_timer_callback, config)

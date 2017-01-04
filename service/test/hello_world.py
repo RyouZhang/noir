@@ -2,11 +2,10 @@ import router
 import rule
 import functools
 
-class HelloWorld(router.SericeHandler):
+class HelloWorld(router.ServiceHandler):
     async def process(self, args, context):
         return 'Hello world from ApiHandler', None
 
-router.register_api_handler(
+router.register_service_handler(
     '/api/hello/v1', 
-    HelloWorld(), 
-    rule_func = functools.partial(rule.api_signed_rule, None))
+    HelloWorld())

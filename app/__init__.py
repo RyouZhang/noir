@@ -1,7 +1,1 @@
-
-__all__ = [
-    'web_server'
-]
-
-
-from app import *
+from app.web_server import ServerConfig, run_web_server

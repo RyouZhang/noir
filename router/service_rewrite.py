@@ -2,9 +2,9 @@ import types
 import asyncio
 import functools
 
-__all__ = (
+__all__ = [
     'register_service_rewrite'
-)
+]
 
 # rewrite_func(api, args, context) -> api, args, context
 def register_service_rewrite(path, rewrite_func):

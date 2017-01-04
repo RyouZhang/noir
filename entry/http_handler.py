@@ -9,14 +9,10 @@ import util
 
 
 class HttpRequestHandler(aiohttp.server.ServerHttpProtocol):
-    def __init__(self, timeout=10):
-        self._timeout = timeout
-
-
     async def handle_request(self, message, payload):
         start_time = util.get_timestamp()
-        api, args, context = await self.prepare_response_handler(message, payload)
-        raw, err = await service_router.async_call_api(api, args, context, self._timeout)
+        api, args, context = await self.parse_request_handler(message, payload)
+        raw, err = await service_router.async_call_api(api, args, context, 10)
         util.logger.info('%s|%s|%s|%s', api, args, context, util.get_timestamp() - start_time)
         await self._process_response(message, raw, err)
 
@@ -31,15 +27,12 @@ class HttpRequestHandler(aiohttp.server.ServerHttpProtocol):
         elif message.method == 'POST':
             raw = await payload.read()
             args = parse_qsl(raw)
-        
-        for (k, v) in pairs:
-            args[k] = v
-        
+
         return path, args, dict()
 
 
     def prepare_response_handler(self, response, raw, err):
-        return response, raw
+        return response, raw.encode('utf-8')
 
 
     async def _process_response(self, message, raw, err):

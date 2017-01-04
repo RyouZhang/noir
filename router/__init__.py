@@ -1,10 +1,4 @@
 
-
-__all__ = [
-    'service_handler',
-    'service_rewrite',
-    'service_router',
-]
-
-
-from router import *
+from router.service_handler import ServiceHandler
+from router.service_rewrite import register_service_rewrite
+from router.service_router import register_service_handler

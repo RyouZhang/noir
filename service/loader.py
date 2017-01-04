@@ -1,6 +1,6 @@
 import os
 
-def impoer_service(service_name):
+def import_service(service_name):
     services = os.getenv('SERVICES', None)
 
     if services is not None:
@@ -9,3 +9,4 @@ def impoer_service(service_name):
         if len(valid_services) > 0:
             return valid_services
         return None
+    return None
