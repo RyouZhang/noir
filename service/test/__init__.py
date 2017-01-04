@@ -1,16 +1,12 @@
-import os
+from service.loader import impoer_service
 
-__all__ = (
-    'hello_world',
-    'hello_world_v2',
-    'push_message',
-)
+__all__ =  impoer_service('service.test')
 
-services = os.getenv('SERVICES', None)
-if services is not None:
-    services = [s.strip() for s in services.split(',')]
-    valid_services = [service.replace('service.test.', '') for service in services if service.startswith('service.test.')]
-    if len(valid_services) > 0:
-        __all__ = valid_services
+if __all__ is None:
+    __all__ = (
+        'hello_world',
+        'hello_world_v2',
+        'push_message',
+    )
 
 from service.test import *

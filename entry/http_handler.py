@@ -5,13 +5,15 @@ import aiohttp.server
 from urllib.parse import urlparse, parse_qsl
 
 import router
+import rewrite
 import service
 import util
 
 
 class HttpRequestHandler(aiohttp.server.ServerHttpProtocol):
-    def __init__(self, parse_request_handler, prepare_response_handler, timeout=10):
+    def __init__(self, parse_request_handler, prepare_response_handler, timeout=10, rewrite_deep=5):
         self._timeout = timeout
+        self._rewrite_deep = rewrite_deep
 
 
     async def handle_request(self, message, payload):
@@ -21,8 +23,13 @@ class HttpRequestHandler(aiohttp.server.ServerHttpProtocol):
             await self.process_response(message, None, 'Invalid_Parse_Request')
         else:
             api, args, context = await self._parse_request_handler(message, payload)
+
+            api, args, context = await service_retrite.async_rewrite_api(api, args, context, self._rewrite_deep)
+
             raw, err = await router.service_router.async_call_api(api, args, context, self._timeout)
+
             util.logger.info('%s|%s|%s|%s', api, args, context, util.get_timestamp() - start_time)
+            
             await self.process_response(message, raw, err)
 
 

@@ -1,6 +1,6 @@
 import os
 
-def load_service(service_name):
+def impoer_service(service_name):
     services = os.getenv('SERVICES', None)
 
     if services is not None:

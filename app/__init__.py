@@ -1,1 +1,1 @@
-from app.web import WebApp
+from app.web import run_web_app
