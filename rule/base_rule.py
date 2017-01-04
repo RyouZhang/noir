@@ -2,6 +2,7 @@ import asyncio
 
 #common rule func def rule_func(config, params, context):
 
+
 async def and_rule(config, params, context):
     rule_func_array = config.get('rules', None)
     if rule_func_array is None or len(rule_func_array) == 0:
@@ -11,6 +12,7 @@ async def and_rule(config, params, context):
         if err is not None:
             return False, err
     return True, None
+
 
 async def or_rule(config, params, context):
     rule_func_array = config.get('rules', None)

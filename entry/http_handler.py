@@ -5,32 +5,20 @@ import aiohttp.server
 from urllib.parse import urlparse, parse_qsl
 
 import router
-import rewrite
-import service
 import util
 
 
 class HttpRequestHandler(aiohttp.server.ServerHttpProtocol):
-    def __init__(self, parse_request_handler, prepare_response_handler, timeout=10, rewrite_deep=5):
+    def __init__(self, timeout=10):
         self._timeout = timeout
-        self._rewrite_deep = rewrite_deep
 
 
     async def handle_request(self, message, payload):
         start_time = util.get_timestamp()
-
-        if self._parse_request_handler is None:
-            await self.process_response(message, None, 'Invalid_Parse_Request')
-        else:
-            api, args, context = await self._parse_request_handler(message, payload)
-
-            api, args, context = await service_retrite.async_rewrite_api(api, args, context, self._rewrite_deep)
-
-            raw, err = await router.service_router.async_call_api(api, args, context, self._timeout)
-
-            util.logger.info('%s|%s|%s|%s', api, args, context, util.get_timestamp() - start_time)
-            
-            await self.process_response(message, raw, err)
+        api, args, context = await self.prepare_response_handler(message, payload)
+        raw, err = await router.service_router.async_call_api(api, args, context, self._timeout)
+        util.logger.info('%s|%s|%s|%s', api, args, context, util.get_timestamp() - start_time)
+        await self._process_response(message, raw, err)
 
 
     async def parse_request_handler(self, message, payload):
@@ -54,7 +42,7 @@ class HttpRequestHandler(aiohttp.server.ServerHttpProtocol):
         return response, raw
 
 
-    async def process_response(self, message, raw, err):
+    async def _process_response(self, message, raw, err):
         try:
             status = 200
             response = aiohttp.Response(
@@ -72,8 +60,7 @@ class HttpRequestHandler(aiohttp.server.ServerHttpProtocol):
                 response.add_compression_filter('deflate')
                 response.add_chunking_filter(8192)
 
-            if self._prepare_response_handler is not None:
-                response, raw= self._prepare_response_handler(response, raw, err)
+            response, raw = self.prepare_response_handler(response, raw, err)
 
             response.send_headers()
             if raw is not None:
