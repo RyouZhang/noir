@@ -12,8 +12,9 @@ process_num = int(os.getenv('PROCESS_NUM', mp.cpu_count()))
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 def app_main():
-    config = app.ServerConfig().set_port(server_port)
-    app.run_web_server(config, process_num=process_num)
+    app.run_web_server(
+        app.ServerConfig(port=server_port), 
+        process_num=process_num)
 
 if __name__ == '__main__':
     app_main()

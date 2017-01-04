@@ -11,32 +11,20 @@ asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 WORKER_MONITOR_TIME = 5
 
-__all__ = [
-    'ServerConfig',
-    'run_web_server'
-]
-
-
 class ServerConfig:
 
-    def __init__(self):
-        self.port = 80
+    def __init__(self, port=80):
+        self.port = port
         self.keep_alive = True
         self.keep_alive_timeout = 90
         self.handler_class = entry.HttpRequestHandler
         self.services = []
 
-    def set_port(self, port):
-        self.port = port
-        return self
-
-    def set_keep_alive(self, flag):
+    def set_keep_alive(self, flag, timeout=90):
         self.keep_alive = flag
+        self.keep_alive_timeout = timeout
         return self
 
-    def set_keep_alive_timeout(self, flag):
-        self.keep_alive_timeout = flag
-        return self
 
     def add_service(self, service_module):
         if service_module is type(list):
