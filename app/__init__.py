@@ -1,1 +1,7 @@
-from app.web import run_web_app
+
+__all__ = [
+    'web_server'
+]
+
+
+from app import *

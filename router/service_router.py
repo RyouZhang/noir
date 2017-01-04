@@ -10,7 +10,6 @@ from router.service_rewrite import service_rewrite
 
 __all__ = [
     'register_service_handler',
-    'service_router'
 ]
 
 MAX_RWERITE_DEEP = 3
