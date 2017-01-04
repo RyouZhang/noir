@@ -2,19 +2,15 @@ import time
 import asyncio
 import aiohttp
 import aiohttp.server
+from urllib.parse import urlparse, parse_qsl
 
 import router
 import service
 import util
 
 
-#async def parse_request_handler(message, payload) -> api, args, context
-#def prepare_response_handler(response, raw, err) -> reponse, raw
-
 class HttpRequestHandler(aiohttp.server.ServerHttpProtocol):
     def __init__(self, parse_request_handler, prepare_response_handler, timeout=10):
-        self._parse_request_handler = parse_request_handler
-        self._prepare_response_handler = prepare_response_handler
         self._timeout = timeout
 
 
@@ -28,6 +24,27 @@ class HttpRequestHandler(aiohttp.server.ServerHttpProtocol):
             raw, err = await router.service_router.async_call_api(api, args, context, self._timeout)
             util.logger.info('%s|%s|%s|%s', api, args, context, util.get_timestamp() - start_time)
             await self.process_response(message, raw, err)
+
+
+    async def parse_request_handler(self, message, payload):
+        url_info = urlparse(message.path)
+        path = url_info.path
+
+        args = {}
+        if message.method == 'GET':
+            args = parse_qsl(url_info.query)
+        elif message.method == 'POST':
+            raw = await payload.read()
+            args = parse_qsl(raw)
+        
+        for (k, v) in pairs:
+            args[k] = v
+        
+        return path, args, dict()
+
+
+    def prepare_response_handler(self, response, raw, err):
+        return response, raw
 
 
     async def process_response(self, message, raw, err):
