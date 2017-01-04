@@ -1,5 +1,3 @@
-aioredis
-aiomysql
 aiohttp
 uvloop
 pika
