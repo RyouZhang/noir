@@ -24,9 +24,9 @@ class HttpRequestHandler(aiohttp.server.ServerHttpProtocol):
         if self._parse_request_handler is None:
             await self.process_response(message, None, 'Invalid_Parse_Request')
         else:
-            api, params, context = await self._parse_request_handler(message, payload)
-            raw, err = await router.service_router.async_call_api(api, params, context, self._timeout)
-            util.logger.info('%s|%s|%s|%s', api, params, context, util.get_timestamp() - start_time)
+            api, args, context = await self._parse_request_handler(message, payload)
+            raw, err = await router.service_router.async_call_api(api, args, context, self._timeout)
+            util.logger.info('%s|%s|%s|%s', api, args, context, util.get_timestamp() - start_time)
             await self.process_response(message, raw, err)
 
 
@@ -38,26 +38,22 @@ class HttpRequestHandler(aiohttp.server.ServerHttpProtocol):
             )
             response.add_header('Transfer-Encoding', 'chunked')
 
+            accept_encoding = message.headers.get('accept-encoding', '').lower()
+            if 'gzip' in accept_encoding:
+                response.add_header('Content-Encoding', 'gzip')
+                response.add_compression_filter('gzip')
+                response.add_chunking_filter(8192)
+            elif 'deflate' in accept_encoding:
+                response.add_header('Content-Encoding', 'deflate')
+                response.add_compression_filter('deflate')
+                response.add_chunking_filter(8192)
+
             if self._prepare_response_handler is not None:
                 response, raw= self._prepare_response_handler(response, raw, err)
 
-            if err is None:
-                accept_encoding = message.headers.get('accept-encoding', '').lower()
-                if 'gzip' in accept_encoding:
-                    response.add_header('Content-Encoding', 'gzip')
-                    response.add_compression_filter('gzip')
-                    response.add_chunking_filter(8192)
-                elif 'deflate' in accept_encoding:
-                    response.add_header('Content-Encoding', 'deflate')
-                    response.add_compression_filter('deflate')
-                    response.add_chunking_filter(8192)
-
-                response.send_headers()
-                response.write(json.dumps(raw).encode('utf-8'))
-            else:
-                if raw is not None:
-                    response.write(raw)
-                response.send_headers()
+            response.send_headers()
+            if raw is not None:
+                response.write(raw)
 
             await response.write_eof()
             if response.keep_alive():
