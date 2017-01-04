@@ -1,0 +1,6 @@
+aioredis
+aiomysql
+aiohttp
+uvloop
+pika
+toml
