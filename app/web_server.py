@@ -6,6 +6,7 @@ import uvloop
 
 import entry
 import importlib
+import importlib.util
 
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
@@ -27,9 +28,9 @@ class ServerConfig:
 
 
     def add_service(self, service_module):
-        if service_module is type(list):
+        if type(service_module) is list:
             self.services = self.services + service_module
-        else:
+        elif type(service_module) is str and len(service_module) > 0:
             self.services.append(service_module)
         return self 
     

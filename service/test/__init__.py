@@ -1,6 +1,6 @@
 from service.loader import import_service
 
-__all__ =  import_service('service.test')
+__all__ =  import_service(__name__)
 
 if __all__ is None:
     __all__ = [
