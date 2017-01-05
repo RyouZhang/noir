@@ -4,7 +4,6 @@ A python web service sample base on aiohttp, for python 3.5+
 ## Dependent
 - uvloop
 - aiohttp
-- pika
 - toml
 
 ## 环境的搭建

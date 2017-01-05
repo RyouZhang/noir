@@ -6,7 +6,6 @@ if __all__ is None:
     __all__ = [
         'hello_world',
         'hello_world_v2',
-        'push_message',
     ]
 
 from service.test import *
