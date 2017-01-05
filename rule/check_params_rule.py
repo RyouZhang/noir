@@ -1,9 +1,13 @@
 
+
 async def check_params_rule(conf, args, context):
-    for (key, v_type) in conf:
+    for (key, v_type, v_range_func) in conf:
         value = args.get(key, None)
         if value is None or isinstance(value, v_type) is False:
-            return False, 'Invalid_Params %s(%s)' % (key, v_type)
+            return False, 'Invalid_Params %s(%s)=%s' % (key, v_type, value)
+        
+        if v_range_func is not None and not v_range_func(value):
+            return False, 'Invalid_Params %s(%s)=%s' % (key, v_type, value)
     return True, None
 
 

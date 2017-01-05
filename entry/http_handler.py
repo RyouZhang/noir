@@ -23,7 +23,9 @@ class HttpRequestHandler(aiohttp.server.ServerHttpProtocol):
 
         args = {}
         if message.method == 'GET':
-            args = parse_qsl(url_info.query)
+            pairs = parse_qsl(url_info.query)
+            for (k, v) in pairs:
+                args[k] = v
         elif message.method == 'POST':
             raw = await payload.read()
             args = parse_qsl(raw)
@@ -31,16 +33,22 @@ class HttpRequestHandler(aiohttp.server.ServerHttpProtocol):
         return path, args, dict()
 
 
-    def prepare_response_handler(self, response, raw, err):
+    def prepare_response_handler(self, message, raw, err):
+        if err is not None:
+            response = aiohttp.Response(
+                self.writer, 500, http_version = message.version, close = message.should_close
+            )   
+            return response, err.encode('utf-8')
+
+        response = aiohttp.Response(
+            self.writer, 200, http_version = message.version, close = message.should_close
+        )   
         return response, raw.encode('utf-8')
 
 
     async def _process_response(self, message, raw, err):
         try:
-            status = 200
-            response = aiohttp.Response(
-                self.writer, status, http_version = message.version, close = message.should_close
-            )
+            response, raw = self.prepare_response_handler(message, raw, err)
             response.add_header('Transfer-Encoding', 'chunked')
 
             accept_encoding = message.headers.get('accept-encoding', '').lower()
@@ -53,8 +61,6 @@ class HttpRequestHandler(aiohttp.server.ServerHttpProtocol):
                 response.add_compression_filter('deflate')
                 response.add_chunking_filter(8192)
 
-            response, raw = self.prepare_response_handler(response, raw, err)
-
             response.send_headers()
             if raw is not None:
                 response.write(raw)
@@ -64,4 +70,5 @@ class HttpRequestHandler(aiohttp.server.ServerHttpProtocol):
                 self.keep_alive(True)
 
         except Exception as e:
+            print(e)
             self.keep_alive(False)
