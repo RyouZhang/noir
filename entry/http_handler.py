@@ -23,12 +23,10 @@ class HttpRequestHandler(aiohttp.server.ServerHttpProtocol):
 
         args = {}
         if message.method == 'GET':
-            pairs = parse_qsl(url_info.query)
-            for (k, v) in pairs:
-                args[k] = v
+            args = {k:v for (k, v)in parse_qsl(url_info.query)}
         elif message.method == 'POST':
             raw = await payload.read()
-            args = parse_qsl(raw)
+            args = {k:v for (k, v)in parse_qsl(raw)}
 
         return path, args, dict()
 
@@ -70,5 +68,4 @@ class HttpRequestHandler(aiohttp.server.ServerHttpProtocol):
                 self.keep_alive(True)
 
         except Exception as e:
-            print(e)
             self.keep_alive(False)

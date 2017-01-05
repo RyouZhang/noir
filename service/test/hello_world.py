@@ -4,7 +4,6 @@ import functools
 
 class HelloWorld(router.ServiceHandler):
     async def process(self, args, context):
-        print('asdsadasdasdasd')
         return 'Hello world from ApiHandler', None
 
 router.register_service_handler(
