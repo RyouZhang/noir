@@ -55,7 +55,6 @@ client = HTTPClient()
 async def async_request(url, method='GET', headers=dict(), body=None, raw_body_func=None):
     if body is None and raw_body_func is not None:
         body = await raw_body_func()
-    util.logger.info('body: %s', body)
     result, err = await client.async_call(url, method=method, headers=headers, body=body)
     return result, err
 
