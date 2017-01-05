@@ -63,7 +63,6 @@ def launch_server(config):
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
     import router
-    import service
 
     for service_name in config.services:
         importlib.import_module(service_name)

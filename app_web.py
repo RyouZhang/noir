@@ -13,7 +13,7 @@ asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 def app_main():
     app.run_web_server(
-        app.ServerConfig(port=server_port), 
+        app.ServerConfig(port=server_port).add_service('service.test'), 
         process_num=process_num)
 
 if __name__ == '__main__':
