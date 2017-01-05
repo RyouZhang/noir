@@ -1,4 +1,3 @@
 aiohttp
 uvloop
-pika
 toml
