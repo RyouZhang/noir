@@ -1,4 +1,4 @@
-import router
+import nori.router
 
 class HelloWorldV2(router.ServiceHandler):
    async def process(self, args, context):

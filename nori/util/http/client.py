@@ -2,7 +2,7 @@ from urllib.parse import urlparse
 import asyncio
 import aiohttp
 
-import util
+import nori.util
 
 class HTTPClient(object):
     def __init__(self):

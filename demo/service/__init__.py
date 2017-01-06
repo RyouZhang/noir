@@ -1,4 +1,4 @@
-from service.loader import import_service
+from demo.service.loader import import_service
 
 __all__ =  import_service(__name__)
 

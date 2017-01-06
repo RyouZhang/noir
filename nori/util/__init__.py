@@ -1,2 +1,2 @@
-from util.time_util import get_timestamp
-from util.log_helper import logger
+from nori.util.time_util import get_timestamp
+from nori.util.log_helper import logger

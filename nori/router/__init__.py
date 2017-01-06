@@ -1,4 +1,4 @@
 
-from router.service_handler import ServiceHandler
-from router.service_rewrite import register_service_rewrite
-from router.service_router import register_service_handler
+from nori.router.service_handler import ServiceHandler
+from nori.router.service_rewrite import register_service_rewrite
+from nori.router.service_router import register_service_handler

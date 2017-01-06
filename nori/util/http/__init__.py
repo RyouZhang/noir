@@ -1,1 +1,1 @@
-from util.http.client import async_request
+from nori.util.http.client import async_request

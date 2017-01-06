@@ -4,7 +4,7 @@ import asyncio
 import util
 import uvloop
 
-import entry
+import nori.entry
 import importlib
 import importlib.util
 

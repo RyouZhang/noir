@@ -1,1 +1,1 @@
-from entry.http_handler import HttpRequestHandler
+from nori.entry.http_handler import HttpRequestHandler

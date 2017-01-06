@@ -1,5 +1,4 @@
 import os
-import multiprocessing as mp
 import asyncio
 import util
 import uvloop

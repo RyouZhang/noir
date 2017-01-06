@@ -1,5 +1,5 @@
-import router
-import rule
+import nori.router
+import nori.rule
 import functools
 
 class HelloWorld(router.ServiceHandler):
