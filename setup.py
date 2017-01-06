@@ -4,21 +4,21 @@
 from setuptools import setup
 
 setup(
-    name='nori',
+    name='noir',
     version='0.0.1',
-    description='fast web framework',
+    description='A python fast web service base on aiohttp and uvloop, for python 3.5+',
     author='ryou zhang',
     author_email='ryouzhang@gmail.com',
-    url='https://github.com/RyouZhang/nori/',
+    url='https://github.com/RyouZhang/noir/',
     install_requires=['uvloop', 'aiohttp'],
     packages=[
-        'nori', 
-        'nori.app', 
-        'nori.entry', 
-        'nori.rule',
-        'nori.router',
-        'nori.util',
-        'nori.util.http',
-        'nori.util.json'],   
+        'noir', 
+        'noir.app', 
+        'noir.entry', 
+        'noir.rule',
+        'noir.router',
+        'noir.util',
+        'noir.util.http',
+        'noir.util.json'],   
     license='Licence :: MTI Lecence',
 )
