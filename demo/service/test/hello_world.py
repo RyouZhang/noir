@@ -1,10 +1,10 @@
-import nori.router
-import nori.rule
+import nori.router as router
+import nori.rule as rule
 import functools
 
 class HelloWorld(router.ServiceHandler):
     async def process(self, args, context):
-        return 'Hello world from ApiHandler', None
+        return 'Hello world from HelloWorld', None
 
 router.register_service_handler(
     '/api/hello/v1', 
