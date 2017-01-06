@@ -1,1 +1,1 @@
-from nori.app.web_server import ServerConfig, run_web_server
+from noir.app.web_server import ServerConfig, run_web_server

@@ -4,8 +4,8 @@ import uvloop
 import multiprocessing as mp
 import toml
 
-import nori.app as app
-import nori.util as util
+import noir.app as app
+import noir.util as util
 
 
 util.setLoggerConfig(toml.load(open('logging.toml')))

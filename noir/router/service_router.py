@@ -4,9 +4,9 @@ import types
 import asyncio
 import functools
 
-import nori.util as util
-from nori.router.service_handler import ServiceHandler
-from nori.router.service_rewrite import service_rewrite
+import noir.util as util
+from noir.router.service_handler import ServiceHandler
+from noir.router.service_rewrite import service_rewrite
 
 __all__ = [
     'register_service_handler',

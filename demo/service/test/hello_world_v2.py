@@ -1,5 +1,5 @@
-import nori.router as router
-import nori.rule as rule
+import noir.router as router
+import noir.rule as rule
 
 class HelloWorldV2(router.ServiceHandler):
    async def process(self, args, context):

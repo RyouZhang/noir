@@ -4,8 +4,8 @@ import asyncio
 import uvloop
 import importlib
 
-import nori.entry as entry
-import nori.util as util
+import noir.entry as entry
+import noir.util as util
 
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
@@ -62,7 +62,7 @@ def run_web_server(config, process_num=mp.cpu_count()):
 def launch_server(config):
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
-    import nori.router
+    import noir.router
 
     for service_name in config.services:
         importlib.import_module(service_name)
