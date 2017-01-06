@@ -17,6 +17,8 @@ setup(
         'nori.entry', 
         'nori.rule',
         'nori.router',
-        'nori.util'],   
+        'nori.util',
+        'nori.util.http',
+        'nori.util.json'],   
     license='Licence :: MTI Lecence',
 )
