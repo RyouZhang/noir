@@ -6,5 +6,7 @@ setup(
     description='fast web framework',
     author='ryou zhang',
     author_email='ryouzhang@gmail.com',
-    install_requires=['uvloop', 'aiohttp', 'toml']
+    install_requires=['uvloop', 'aiohttp', 'toml'],
+    py_modules=['nori'],
+    licence='Licence :: MTI Lecence'
 )
