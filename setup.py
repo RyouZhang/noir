@@ -1,4 +1,4 @@
-from setuptools import setup
+from distutils.core import setup
 
 setup(
     name='nori',
@@ -7,6 +7,7 @@ setup(
     author='ryou zhang',
     author_email='ryouzhang@gmail.com',
     install_requires=['uvloop', 'aiohttp', 'toml'],
+    url='https://github.com/RyouZhang/nori.git',
     py_modules=['nori'],
     licence='Licence :: MTI Lecence'
 )
