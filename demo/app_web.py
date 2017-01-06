@@ -1,13 +1,14 @@
 import os
 import asyncio
 import uvloop
+import multiprocessing as mp
 import toml
 
 import nori.app as app
 import nori.util as util
 
 
-util.setLoggerConfig(toml.loads(open('logging.toml')))
+util.setLoggerConfig(toml.load(open('logging.toml')))
 util.setLoggerEffectLevels('info,warning,error')
 
 server_port = os.getenv('SERVER_PORT', 8080)
@@ -19,7 +20,7 @@ asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 def app_main():
     app.run_web_server(
         app.ServerConfig(port=server_port).add_service(
-            services.split(',')
+            'service.test'
         ), process_num=process_num)
 
 if __name__ == '__main__':
