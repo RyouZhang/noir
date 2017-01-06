@@ -12,14 +12,13 @@ __all__ = [
     'register_service_handler',
 ]
 
-MAX_RWERITE_DEEP = 3
 
 def register_service_handler(path, handler, rule_func=None):
     service_router._register_service(path, handler, rule_func)
 
 class ServiceRouter:
     
-    def __init__(self, max_rewrite_deep=MAX_RWERITE_DEEP):
+    def __init__(self):
         self._router_dic = dict()
 
 

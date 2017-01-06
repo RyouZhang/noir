@@ -10,10 +10,12 @@ __all__ = [
 def register_service_rewrite(path, rewrite_func):
     service_rewrite._register_rewrite(path, rewrite_func)
 
+MAX_RWERITE_DEEP = 3
 
 class ServiceRewrite:
 
-    def __init__(self):
+    def __init__(self, max_rewrite_deep=MAX_RWERITE_DEEP):
+        self._max_rewrite_deep = max_rewrite_deep
         self._rewrite_dic = dict()
 
     def _register_rewrite(self, path, rewrite_func):
