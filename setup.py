@@ -12,5 +12,5 @@ setup(
     url='https://github.com/RyouZhang/nori/',
     install_requires=['uvloop', 'aiohttp', 'toml'],
     packages=['nori'],   
-    licence='Licence :: MTI Lecence',
+    license='Licence :: MTI Lecence',
 )
