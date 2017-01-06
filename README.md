@@ -1,5 +1,5 @@
 # nori
-A python web service sample base on aiohttp, for python 3.5+
+A python fast web service base on aiohttp and uvloop, for python 3.5+
 
 ## Dependent
 - uvloop
