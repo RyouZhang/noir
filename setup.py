@@ -11,6 +11,12 @@ setup(
     author_email='ryouzhang@gmail.com',
     url='https://github.com/RyouZhang/nori/',
     install_requires=['uvloop', 'aiohttp', 'toml'],
-    packages=['nori'],   
+    packages=[
+        'nori', 
+        'nori.app', 
+        'nori.entry', 
+        'nori.rule',
+        'nori.router',
+        'nori.util'],   
     license='Licence :: MTI Lecence',
 )
