@@ -1,8 +1,14 @@
 import os
 import asyncio
 import uvloop
+import toml
 
 import nori.app as app
+import nori.util as util
+
+
+util.setLoggerConfig(toml.loads(open('logging.toml')))
+util.setLoggerEffectLevels('info,warning,error')
 
 server_port = os.getenv('SERVER_PORT', 8080)
 process_num = int(os.getenv('PROCESS_NUM', mp.cpu_count()))

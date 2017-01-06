@@ -10,7 +10,7 @@ setup(
     author='ryou zhang',
     author_email='ryouzhang@gmail.com',
     url='https://github.com/RyouZhang/nori/',
-    install_requires=['uvloop', 'aiohttp', 'toml'],
+    install_requires=['uvloop', 'aiohttp'],
     packages=[
         'nori', 
         'nori.app', 

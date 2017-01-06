@@ -1,14 +1,7 @@
 import os
-import toml
 import logging.config
 
-logging_config_file = "logging.toml"
-
 log_levels = None
-
-log_level_str = os.getenv('LOG_LEVELS', None)
-if log_level_str is not None:
-    log_levels = log_level_str.upper().split(',')
 
 class LogLevelAdapter(logging.LoggerAdapter):
 
@@ -23,8 +16,20 @@ class LogLevelAdapter(logging.LoggerAdapter):
             return True
         return False
 
-with open(logging_config_file) as configfile:
-    config = toml.loads(configfile.read())
-    logging.config.dictConfig(config)
 
 logger = LogLevelAdapter(logging.getLogger(), None)
+
+
+def setLoggerConfig(config):
+    logging.config.dictConfig(config)
+
+
+def setLoggerEffectLevels(levels):
+    if type(levels) is list:
+        log_levels = levels
+    elif type(levels) is str:
+        log_levels = levels.upper().split(',')
+
+
+def getLogger():
+    return logger
