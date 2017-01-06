@@ -29,7 +29,3 @@ def setLoggerEffectLevels(levels):
         log_levels = levels
     elif type(levels) is str:
         log_levels = levels.upper().split(',')
-
-
-def getLogger():
-    return logger
