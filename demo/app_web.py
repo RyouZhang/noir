@@ -4,7 +4,7 @@ import asyncio
 import util
 import uvloop
 
-import app
+import nori.app as app
 
 server_port = os.getenv('SERVER_PORT', 8080)
 process_num = int(os.getenv('PROCESS_NUM', mp.cpu_count()))
