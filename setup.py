@@ -8,6 +8,6 @@ setup(
     author_email='ryouzhang@gmail.com',
     install_requires=['uvloop', 'aiohttp', 'toml'],
     url='https://github.com/RyouZhang/nori.git',
-    py_modules=['nori'],
+    packages=['nori'],
     licence='Licence :: MTI Lecence'
 )
