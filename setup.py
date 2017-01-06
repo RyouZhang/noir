@@ -16,7 +16,7 @@ from distutils.core import Extension
 setup(
     name='nori',
     version='0.0.1',
-    packages=['nori'],    
+    py_modules=['nori'],    
     description='fast web framework',
     author='ryou zhang',
     author_email='ryouzhang@gmail.com',
