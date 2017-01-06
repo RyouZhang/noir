@@ -6,6 +6,5 @@ setup(
     description='fast web framework',
     author='ryou zhang',
     author_email='ryouzhang@gmail.com',
-    packages=['nori'],
     install_requires=['uvloop', 'aiohttp', 'toml']
 )
