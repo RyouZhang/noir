@@ -4,7 +4,6 @@ A python web service sample base on aiohttp, for python 3.5+
 ## Dependent
 - uvloop
 - aiohttp
-- toml
 
 ## 环境的搭建
 建议使用dockerfile来快速构成测试环境
