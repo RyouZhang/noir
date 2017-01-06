@@ -14,9 +14,9 @@ except ImportError:
 from distutils.core import Extension
 
 setup(
-    name='nori',
+    name='kaze',
     version='0.0.1',
-    py_modules=['nori'],    
+    py_modules=['kaze'],    
     description='fast web framework',
     author='ryou zhang',
     author_email='ryouzhang@gmail.com',
