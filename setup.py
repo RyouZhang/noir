@@ -1,22 +1,12 @@
-import os
-import platform
-import sys
-import warnings
+#!/usr/bin/env python
 
-try:
-    # Use setuptools if available, for install_requires (among other things).
-    import setuptools
-    from setuptools import setup
-except ImportError:
-    setuptools = None
-    from distutils.core import setup
 
-from distutils.core import Extension
+from setuptools import setup
 
 setup(
-    name='kaze',
+    name='nori',
     version='0.0.1',
-    py_modules=['kaze'],    
+    py_modules=['nori'],    
     description='fast web framework',
     author='ryou zhang',
     author_email='ryouzhang@gmail.com',
