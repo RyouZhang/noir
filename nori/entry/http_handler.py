@@ -5,7 +5,7 @@ import aiohttp.server
 from urllib.parse import urlparse, parse_qsl
 
 from nori.router.service_router import service_router
-import nori.util
+import nori.util as util
 
 
 class HttpRequestHandler(aiohttp.server.ServerHttpProtocol):

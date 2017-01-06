@@ -4,7 +4,7 @@ import types
 import asyncio
 import functools
 
-import nori.util
+import nori.util as util
 from nori.router.service_handler import ServiceHandler
 from nori.router.service_rewrite import service_rewrite
 

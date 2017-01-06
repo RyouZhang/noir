@@ -1,12 +1,11 @@
 import os
 import multiprocessing as mp
 import asyncio
-import util
 import uvloop
-
-import nori.entry
 import importlib
-import importlib.util
+
+import nori.entry as entry
+import nori.util as util
 
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
@@ -63,14 +62,14 @@ def run_web_server(config, process_num=mp.cpu_count()):
 def launch_server(config):
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
-    import router
+    import nori.router
 
     for service_name in config.services:
         importlib.import_module(service_name)
 
     loop = asyncio.get_event_loop()
     f = loop.create_server(
-        lambda: entry.HttpRequestHandler(
+        lambda: config.handler_class(
             debug=True,
             tcp_keepalive=config.keep_alive,
             keepalive_timeout=config.keep_alive_timeout),
