@@ -1,6 +1,5 @@
 import os
 import asyncio
-import util
 import uvloop
 
 import nori.app as app
