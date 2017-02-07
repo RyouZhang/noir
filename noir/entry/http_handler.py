@@ -7,7 +7,6 @@ from urllib.parse import urlparse, parse_qsl
 
 from noir.router.service_router import service_router
 
-
 logger = logging.getLogger()
 
 class HttpRequestHandler(aiohttp.server.ServerHttpProtocol):

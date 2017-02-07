@@ -3,14 +3,13 @@ import asyncio
 import uvloop
 import multiprocessing as mp
 import toml
-import logging
+import logging.config
 
 import noir.app as app
-import noir.util.logging as nl
-
+import noir.util.logging
 
 logging.config.dictConfig(toml.load(open('logging.toml')))
-logging.getLogger().addFilter(nl.filter.LogLevelFilter(min_level=logging.INFO))
+logging.getLogger().addFilter(noir.util.logging.filter.LogLevelFilter(min_level=logging.INFO))
 
 server_port = os.getenv('SERVER_PORT', 8080)
 process_num = int(os.getenv('PROCESS_NUM', mp.cpu_count()))
