@@ -5,6 +5,7 @@ import aiohttp
 import aiohttp.server
 from urllib.parse import urlparse, parse_qsl
 
+import noir.util as util
 from noir.router.service_router import service_router
 
 logger = logging.getLogger()
