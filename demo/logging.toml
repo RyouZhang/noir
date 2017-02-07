@@ -4,16 +4,29 @@ version = 1
 format = '[%(asctime)s] %(process)d %(levelname)s %(filename)s %(lineno)d %(funcName)s %(message)s'
 datefmt = '%d/%b/%Y %H:%M:%S'
 
-[filters.level_filter]
+[filters.low_level_filter]
 '()' = 'noir.util.logging.filter.LogLevelFilter'
-min_level = 'WARNING'
+min_level = 0
+max_level = 20
 
-[handlers.console]
+[filters.high_level_filter]
+'()' = 'noir.util.logging.filter.LogLevelFilter'
+min_level = 30
+
+[handlers.low_level]
 class = 'logging.StreamHandler'
 formatter = 'default'
+filters = ['low_level_filter']
 level = 'INFO'
 stream = 'ext://sys.stdout'
 
+[handlers.high_level]
+class = 'logging.StreamHandler'
+formatter = 'default'
+filters = ['high_level_filter']
+level = 'WARNING'
+stream = 'ext://sys.stderr'
+
 [root]
 level = 'INFO'
-handlers = ['console']
+handlers = ['low_level', 'high_level']
