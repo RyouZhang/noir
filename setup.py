@@ -19,6 +19,7 @@ setup(
         'noir.router',
         'noir.util',
         'noir.util.http',
-        'noir.util.json'],   
+        'noir.util.json',
+        'noir.util.logging'],   
     license='Licence :: MTI Lecence',
 )
