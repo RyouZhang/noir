@@ -1,11 +1,13 @@
 import os
+import logging
 import multiprocessing as mp
 import asyncio
 import uvloop
 import importlib
 
 import noir.entry as entry
-import noir.util as util
+
+logger = logging.getLogger()
 
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
@@ -77,7 +79,7 @@ def launch_server(config):
 
     srv = loop.run_until_complete(f)
 
-    util.logger.info('server on %s', srv.sockets[0].getsockname())
+    logger.info('server on %s', srv.sockets[0].getsockname())
     try:
         loop.run_forever()
     except KeyboardInterrupt:
@@ -94,7 +96,7 @@ def on_timer_callback(config):
     dead_works = []
     for worker in workers:
         if worker.is_alive() is False:
-            util.logger.error('the worker %s deaded (pid:%s) %s', worker.name, worker.pid, worker.exitcode)
+            logger.error('the worker %s deaded (pid:%s) %s', worker.name, worker.pid, worker.exitcode)
             dead_works.append(worker)
 
     for worker in dead_works:
@@ -104,7 +106,7 @@ def on_timer_callback(config):
         worker = create_worker(config)
         workers.append(worker)      
         worker.start()
-        util.logger.info('the worker %s restart (pid:%s)', worker.name, worker.pid)
+        logger.info('the worker %s restart (pid:%s)', worker.name, worker.pid)
 
     loop = asyncio.get_event_loop()
     loop.call_later(WORKER_MONITOR_TIME, on_timer_callback, config)

@@ -1,19 +1,21 @@
-import time
+import timel
+import logging
 import asyncio
 import aiohttp
 import aiohttp.server
 from urllib.parse import urlparse, parse_qsl
 
 from noir.router.service_router import service_router
-import noir.util as util
 
+
+logger = logging.getLogger()
 
 class HttpRequestHandler(aiohttp.server.ServerHttpProtocol):
     async def handle_request(self, message, payload):
         start_time = util.get_timestamp()
         api, args, context = await self.parse_request_handler(message, payload)
         raw, err = await service_router.async_call_api(api, args, context, 10)
-        util.logger.info('%s|%s|%s|%s', api, args, context, util.get_timestamp() - start_time)
+        logger.info('%s|%s|%s|%s', api, args, context, util.get_timestamp() - start_time)
         await self._process_response(message, raw, err)
 
 

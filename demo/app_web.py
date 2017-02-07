@@ -3,13 +3,14 @@ import asyncio
 import uvloop
 import multiprocessing as mp
 import toml
+import logging
 
 import noir.app as app
-import noir.util as util
+import noir.util.logging as nori_log
 
 
-util.setLoggerConfig(toml.load(open('logging.toml')))
-util.setLoggerEffectLevels('info,warning,error')
+logging.config.dictConfig(toml.load(open('logging.toml')))
+logging.getLogger().addFilter(nori_log.LogLevelFilter(min_level=logging.INFO))
 
 server_port = os.getenv('SERVER_PORT', 8080)
 process_num = int(os.getenv('PROCESS_NUM', mp.cpu_count()))

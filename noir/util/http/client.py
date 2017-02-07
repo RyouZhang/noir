@@ -1,8 +1,9 @@
 from urllib.parse import urlparse
+import logging
 import asyncio
 import aiohttp
 
-import noir.util as util
+logger = logging.getLogger()
 
 class HTTPClient(object):
     def __init__(self):
@@ -37,13 +38,13 @@ class HTTPClient(object):
             await resp.release()
             return (resp.status, resp.headers, raw), None
         except aiohttp.errors.TimeoutError: 
-            util.logger.error('http request timeout %s %s %s', method, url, body)
+            logger.error('http request timeout %s %s %s', method, url, body)
             if resp is not None:
-                util.logger.error('http response timeout %s %s %s', resp.method, resp.status, resp.reason)
+                logger.error('http response timeout %s %s %s', resp.method, resp.status, resp.reason)
                 resp.close()            
             return (None, None, None), 'Timeout'
         except Exception as e:
-            util.logger.error('http request error %s %s %s', method, url, body)
+            logger.error('http request error %s %s %s', method, url, body)
             if resp is not None:
                 resp.close()
             return (None, None, None), str(e)

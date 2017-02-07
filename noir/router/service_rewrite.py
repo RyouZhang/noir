@@ -1,6 +1,9 @@
 import types
+import logging
 import asyncio
 import functools
+
+logger = logging.getLogger()
 
 __all__ = [
     'register_service_rewrite'
@@ -36,7 +39,7 @@ class ServiceRewrite:
                 return rw_path, args, context
             
             if rewrite_deep + 1 >= self._max_rewrite_deep:
-                util.logger.warning('Rewrite Service Max Times %s to %s', path, rw_path)
+                logger.warning('Rewrite Service Max Times %s to %s', path, rw_path)
                 return rw_path, args, context
             
             return await self.async_rewrite_service(rw_path, args, context, rewrite_deep=rewrite_deep+1)   
