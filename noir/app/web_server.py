@@ -4,14 +4,14 @@ import multiprocessing as mp
 import asyncio
 import uvloop
 import importlib
+import functools
+from urllib.parse import urlparse, parse_qsl
 
-import noir.entry as entry
+from aiohttp import web
+import noir.util as util
+from noir.router.service_router import service_router
 
 logger = logging.getLogger()
-
-asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-
-WORKER_MONITOR_TIME = 5
 
 class ServerConfig:
 
@@ -19,8 +19,10 @@ class ServerConfig:
         self.port = port
         self.keep_alive = True
         self.keep_alive_timeout = 90
-        self.handler_class = entry.HttpRequestHandler
         self.services = []
+        self.parser_request = None
+        self.prepare_response = None
+
 
     def set_keep_alive(self, flag, timeout=90):
         self.keep_alive = flag
@@ -35,78 +37,55 @@ class ServerConfig:
             self.services.append(service_module)
         return self 
     
-    def set_handler_class(self, handler_class):
-        self.handler_class = handler_class
-        return self
+
+async def default_parser_request(request):
+    path = request.path
+    args = {}
+    if request.method == 'GET':
+        args = {k:v for (k, v)in parse_qsl(request.query_string)}
+    elif request.method == 'POST':
+        raw = await request.read()
+        args = {k:v for (k, v)in parse_qsl(raw)}
+    return path, args, dict()
 
 
-workers = []
-
-def run_web_server(config, process_num=mp.cpu_count()):
-    for i in range(process_num):
-        workers.append(create_worker(config))
-
-    for worker in workers:
-        worker.start()
-
-    loop = asyncio.get_event_loop()
-    loop.call_later(WORKER_MONITOR_TIME, on_timer_callback, config)
-    try:
-        loop.run_forever()
-    except KeyboardInterrupt:
-        for worker in workers:
-            if worker.is_alive():
-                worker.terminate() 
-    finally:
-        loop.stop()
+async def default_prepare_response(raw, err):
+    if err is None:
+        return web.Response(status=200, body=raw.encode('utf-8'))
+    else:
+        return web.Response(status=500, body=err.encode('utf-8'))
 
 
-def launch_server(config):
+async def my_handler(config, request):
+    (parser_request, prepare_response) = config
+    start_time = util.get_timestamp()
+    api, args, context = await parser_request(request)
+    raw, err = await service_router.async_call_api(api, args, context, 10)
+    logger.info('%s|%s|%s|%s', api, args, context, util.get_timestamp() - start_time)
+    return await prepare_response(raw, err)
+
+
+def create_http_server(config):
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-
     import noir.router
 
     for service_name in config.services:
         importlib.import_module(service_name)
 
+    srv = web.Server(
+        functools.partial(my_handler, 
+        (config.parser_request or default_parser_request, config.prepare_response or default_prepare_response)),
+        tcp_keepalive=config.keep_alive,
+        keepalive_timeout=config.keep_alive_timeout)
+
     loop = asyncio.get_event_loop()
-    f = loop.create_server(
-        lambda: config.handler_class(
-            debug=True,
-            tcp_keepalive=config.keep_alive,
-            keepalive_timeout=config.keep_alive_timeout),
-        '0.0.0.0', config.port, reuse_port=True)
 
-    srv = loop.run_until_complete(f)
+    f = asyncio.get_event_loop().create_server(srv, '0.0.0.0', config.port, reuse_port=True)
+    t = loop.run_until_complete(f)
 
-    logger.info('server on %s', srv.sockets[0].getsockname())
+    logger.info('server on %s', t.sockets[0].getsockname())
     try:
         loop.run_forever()
     except KeyboardInterrupt:
-        srv.close()
-        loop.run_until_complete(srv.wait_closed())
+        loop.run_until_complete(srv.shutdown())
     loop.close()
-
-
-def create_worker(config):
-    return mp.Process(target=launch_server, args=(config,))
-
-
-def on_timer_callback(config):
-    dead_works = []
-    for worker in workers:
-        if worker.is_alive() is False:
-            logger.error('the worker %s deaded (pid:%s) %s', worker.name, worker.pid, worker.exitcode)
-            dead_works.append(worker)
-
-    for worker in dead_works:
-        workers.remove(worker)
-
-    for i in range(len(dead_works)):
-        worker = create_worker(config)
-        workers.append(worker)      
-        worker.start()
-        logger.info('the worker %s restart (pid:%s)', worker.name, worker.pid)
-
-    loop = asyncio.get_event_loop()
-    loop.call_later(WORKER_MONITOR_TIME, on_timer_callback, config)

@@ -1,1 +1,0 @@
-from noir.entry.http_handler import HttpRequestHandler

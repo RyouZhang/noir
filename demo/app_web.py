@@ -6,7 +6,7 @@ import toml
 import logging
 import logging.config
 
-import noir.app as app
+import noir.app as np
 
 logging.config.dictConfig(toml.load(open('logging.toml')))
 
@@ -17,10 +17,11 @@ services = os.getenv('SERVICES', '')
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 def app_main():
-    app.run_web_server(
-        app.ServerConfig(port=server_port).add_service(
+    np.NoirApp().addCluster(
+        np.create_http_server,
+        np.ServerConfig(port=server_port).add_service(
             'service.test'
-        ), process_num=process_num)
+        ), process_num).run()
 
 if __name__ == '__main__':
     app_main()
