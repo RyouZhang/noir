@@ -15,12 +15,12 @@ logger = logging.getLogger()
 
 class ServerConfig:
 
-    def __init__(self, port=80, parser_request=None, prepare_response=None):
+    def __init__(self, port=80, parse_request=None, prepare_response=None):
         self.port = port
         self.keep_alive = True
         self.keep_alive_timeout = 90
         self.services = []
-        self.parser_request = parser_request
+        self.parse_request = parse_request
         self.prepare_response = prepare_response
 
 
@@ -38,7 +38,7 @@ class ServerConfig:
         return self 
     
 
-async def default_parser_request(request):
+async def default_parse_request(request):
     path = request.path
     args = {}
     if request.method == 'GET':
@@ -57,9 +57,9 @@ async def default_prepare_response(raw, err):
 
 
 async def server_handler(config, request):
-    (parser_request, prepare_response) = config
+    (parse_request, prepare_response) = config
     start_time = util.get_timestamp()
-    api, args, context = await parser_request(request)
+    api, args, context = await parse_request(request)
     raw, err = await service_router.async_call_api(api, args, context, 10)
     logger.info('%s|%s|%s|%s', api, args, context, util.get_timestamp() - start_time)
     return await prepare_response(raw, err)
@@ -74,7 +74,7 @@ def create_http_server(config):
 
     srv = web.Server(
         functools.partial(server_handler, 
-        (config.parser_request or default_parser_request, config.prepare_response or default_prepare_response)),
+        (config.parse_request or default_parse_request, config.prepare_response or default_prepare_response)),
         tcp_keepalive=config.keep_alive,
         keepalive_timeout=config.keep_alive_timeout)
 
