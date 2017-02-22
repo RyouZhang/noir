@@ -56,7 +56,7 @@ async def default_prepare_response(raw, err):
         return web.Response(status=500, body=err.encode('utf-8'))
 
 
-async def my_handler(config, request):
+async def server_handler(config, request):
     (parser_request, prepare_response) = config
     start_time = util.get_timestamp()
     api, args, context = await parser_request(request)
@@ -73,7 +73,7 @@ def create_http_server(config):
         importlib.import_module(service_name)
 
     srv = web.Server(
-        functools.partial(my_handler, 
+        functools.partial(server_handler, 
         (config.parser_request or default_parser_request, config.prepare_response or default_prepare_response)),
         tcp_keepalive=config.keep_alive,
         keepalive_timeout=config.keep_alive_timeout)
