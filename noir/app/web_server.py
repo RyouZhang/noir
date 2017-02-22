@@ -15,13 +15,13 @@ logger = logging.getLogger()
 
 class ServerConfig:
 
-    def __init__(self, port=80):
+    def __init__(self, port=80, parser_request=None, prepare_response=None):
         self.port = port
         self.keep_alive = True
         self.keep_alive_timeout = 90
         self.services = []
-        self.parser_request = None
-        self.prepare_response = None
+        self.parser_request = parser_request
+        self.prepare_response = prepare_response
 
 
     def set_keep_alive(self, flag, timeout=90):
