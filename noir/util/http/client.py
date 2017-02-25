@@ -10,7 +10,7 @@ class HTTPClient(object):
         self._lock = asyncio.Lock()
         self._session = None
 
-    async def async_call(self, url, method='GET', headers=dict(), body=None, time_out=10):
+    async def async_call(self, url, method='GET', headers=dict(), body=None, timeout=10):
         url_info = urlparse(url)
         if url_info is None:
             return (None, None, None), 'Invalid_URL'
@@ -33,7 +33,7 @@ class HTTPClient(object):
                     url=url,
                     headers=headers,
                     data=body,
-                    timeout=time_out)
+                    timeout=timeout)
             raw = await resp.content.read()
             await resp.release()
             return (resp.status, resp.headers, raw), None
@@ -53,9 +53,9 @@ class HTTPClient(object):
 client = HTTPClient()
 
 
-async def async_request(url, method='GET', headers=dict(), body=None, raw_body_func=None, time_out=10):
+async def async_request(url, method='GET', headers=dict(), body=None, raw_body_func=None, timeout=10):
     if body is None and raw_body_func is not None:
         body = await raw_body_func()
-    result, err = await client.async_call(url, method=method, headers=headers, body=body, time_out=time_out)
+    result, err = await client.async_call(url, method=method, headers=headers, body=body, timeout=timeout)
     return result, err
 
