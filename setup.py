@@ -5,7 +5,7 @@ from setuptools import setup
 
 setup(
     name='noir',
-    version='0.0.8',
+    version='0.0.10',
     description='A python fast web service base on aiohttp and uvloop, for python 3.5+',
     author='ryou zhang',
     author_email='ryouzhang@gmail.com',
