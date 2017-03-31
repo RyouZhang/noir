@@ -9,7 +9,6 @@ from urllib.parse import urlparse, parse_qsl
 
 from aiohttp import web
 import noir.util as util
-from noir.router.service_router import service_router
 
 logger = logging.getLogger()
 
@@ -57,6 +56,8 @@ async def default_prepare_response(raw, err):
 
 
 async def server_handler(config, request):
+    from noir.router.service_router import service_router
+
     (parse_request, prepare_response) = config
     start_time = util.get_timestamp()
     api, args, context = await parse_request(request)
