@@ -20,7 +20,7 @@ class HTTPClient(object):
             self._session = None
             self._session = aiohttp.ClientSession(
                 connector=aiohttp.TCPConnector(
-                    conn_timeout=5,
+                    # conn_timeout=5,
                     keepalive_timeout=45,
                     limit=8),
                 loop=asyncio.get_event_loop())

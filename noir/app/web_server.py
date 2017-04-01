@@ -56,8 +56,7 @@ async def default_prepare_response(raw, err):
 
 
 async def server_handler(config, request):
-   
-
+    from noir.router.service_router import service_router
     (parse_request, prepare_response) = config
     start_time = util.get_timestamp()
     api, args, context = await parse_request(request)
@@ -69,7 +68,6 @@ async def server_handler(config, request):
 def create_http_server(config):
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
     import noir.router
-    from noir.router.service_router import service_router
 
     for service_name in config.services:
         importlib.import_module(service_name)
@@ -82,7 +80,7 @@ def create_http_server(config):
 
     loop = asyncio.get_event_loop()
 
-    f = asyncio.get_event_loop().create_server(srv, '0.0.0.0', config.port, reuse_port=True)
+    f = loop.create_server(srv, '0.0.0.0', config.port, reuse_port=True)
     t = loop.run_until_complete(f)
 
     logger.info('server on %s', t.sockets[0].getsockname())
