@@ -37,7 +37,7 @@ class HTTPClient(object):
             raw = await resp.content.read()
             await resp.release()
             return (resp.status, resp.headers, raw), None
-        except aiohttp.errors.TimeoutError: 
+        except asyncio.TimeoutError: 
             logger.error('http request timeout %s %s %s', method, url, body)
             if resp is not None:
                 logger.error('http response timeout %s %s %s', resp.method, resp.status, resp.reason)
