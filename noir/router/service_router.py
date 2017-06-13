@@ -51,7 +51,6 @@ class ServiceRouter:
             if rule_func is not None:
                 result, err = await rule_func(args, context)
                 if err is not None:
-                    logger.warning('call_service_rule_error %s,%s,%s,%s', err, path, args, context)
                     return None, err
   
             async_task = asyncio.ensure_future(handler.process(args, context), loop=asyncio.get_event_loop())
