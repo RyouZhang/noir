@@ -55,7 +55,7 @@ class ServiceRouter:
   
             async_task = asyncio.ensure_future(handler.process(args, context), loop=asyncio.get_event_loop())
             try:
-                (res, err) = await asyncio.wait_for(async_task, timeout, loop=asyncio.get_event_loop())
+                (res, err) = await asyncio.wait_for(async_task, timeout)
                 if err is not None:
                     logger.error('call_api_error %s,%s,%s,%s', err, path, args, context)
                 return res, err
