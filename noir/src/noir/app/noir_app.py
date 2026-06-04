@@ -18,8 +18,8 @@ class NoirApp(object):
         self._workers = []
 
 
-    def addCluster(self, creater_worker, config, count=1):
-        self._clusters.append((creater_worker, config, count))
+    def addCluster(self, create_worker, config, count=1):
+        self._clusters.append((create_worker, config, count))
         return self
 
 
@@ -33,8 +33,8 @@ class NoirApp(object):
         for worker_info in dead_works:
             self._workers.remove(worker_info)
             
-            (creater_worker, config) = worker_info
-            worker = mp.Process(target=creater_worker, args=(config,))
+            (create_worker, config) = worker_info
+            worker = mp.Process(target=create_worker, args=(config,))
             self._workers.append((worker, config))
             worker.start()
             logger.info('the worker %s restart (pid:%s)', worker.name, worker.pid)
@@ -47,9 +47,9 @@ class NoirApp(object):
         if len(self._clusters) == 0:
             return
         
-        for (creater_worker, config, count) in self._clusters:
+        for (create_worker, config, count) in self._clusters:
             for i in range(count):
-                worker = mp.Process(target=creater_worker, args=(config,))
+                worker = mp.Process(target=create_worker, args=(config,))
                 self._workers.append((worker, config))
         
         for (worker, config) in self._workers:
