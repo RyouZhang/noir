@@ -33,7 +33,7 @@ class HTTPClient(object):
                     url=url,
                     headers=headers,
                     data=body,
-                    timeout=timeout)
+                    timeout=aiohttp.ClientTimeout(timeout))
             raw = await resp.content.read()
             await resp.release()
             return (resp.status, resp.headers, raw), None

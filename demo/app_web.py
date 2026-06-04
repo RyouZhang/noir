@@ -5,6 +5,7 @@ import multiprocessing as mp
 import toml
 import logging
 import logging.config
+import sys
 
 import noir.app as np
 
@@ -14,9 +15,12 @@ server_port = os.getenv('SERVER_PORT', 8080)
 process_num = int(os.getenv('PROCESS_NUM', mp.cpu_count()))
 services = os.getenv('SERVICES', '')
 
-asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+# asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 def app_main():
+    loop = uvloop.new_event_loop()
+    asyncio.set_event_loop(loop)
+
     np.NoirApp().addCluster(
         np.create_http_server,
         np.ServerConfig(port=server_port).add_service(
@@ -24,4 +28,4 @@ def app_main():
         ), process_num).run()
 
 if __name__ == '__main__':
-    app_main()
+   app_main()

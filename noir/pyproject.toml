@@ -1,0 +1,15 @@
+[project]
+name = "noir"
+version = "0.1.0"
+authors = [
+    { name = "ryou zhang", email = "ryou.z@binance.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "aiohttp",
+    "uvloop",
+]
+
+[build-system]
+requires = ["uv_build>=0.11.19,<0.12.0"]
+build-backend = "uv_build"

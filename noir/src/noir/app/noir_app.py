@@ -33,13 +33,13 @@ class NoirApp(object):
         for worker_info in dead_works:
             self._workers.remove(worker_info)
             
-            (create_worker, config) = worker_info
-            worker = mp.Process(target=create_worker, args=(config,))
+            (creater_worker, config) = worker_info
+            worker = mp.Process(target=creater_worker, args=(config,))
             self._workers.append((worker, config))
             worker.start()
             logger.info('the worker %s restart (pid:%s)', worker.name, worker.pid)
-
-        loop = asyncio.get_event_loop()
+                                
+        loop = asyncio.get_event_loop()    
         loop.call_later(WORKER_MONITOR_TIME, self.on_timer_callback)
 
 
@@ -47,9 +47,9 @@ class NoirApp(object):
         if len(self._clusters) == 0:
             return
         
-        for (create_worker, config, count) in self._clusters:
+        for (creater_worker, config, count) in self._clusters:
             for i in range(count):
-                worker = mp.Process(target=create_worker, args=(config,))
+                worker = mp.Process(target=creater_worker, args=(config,))
                 self._workers.append((worker, config))
         
         for (worker, config) in self._workers:

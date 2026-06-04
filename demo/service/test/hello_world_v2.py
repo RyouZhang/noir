@@ -2,7 +2,7 @@ import noir.router as router
 import noir.rule as rule
 
 class HelloWorldV2(router.ServiceHandler):
-   async def process(self, args, context):
+   async def process(self, args, context=None):
         return 'Hello world V2 from HelloWorldV2', None
 
 

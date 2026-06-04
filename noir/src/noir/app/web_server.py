@@ -65,20 +65,21 @@ async def server_handler(config, request):
     return await prepare_response(raw, err)
 
 
-def create_http_server(config):
-    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+def create_http_server(config):   
     import noir.router
 
     for service_name in config.services:
         importlib.import_module(service_name)
 
-    srv = web.Server(
+    loop = uvloop.new_event_loop()
+    asyncio.set_event_loop(loop)    
+
+    srv = web.Server(                
         functools.partial(server_handler, 
         (config.parse_request or default_parse_request, config.prepare_response or default_prepare_response)),
         tcp_keepalive=config.keep_alive,
-        keepalive_timeout=config.keep_alive_timeout)
-
-    loop = asyncio.get_event_loop()
+        keepalive_timeout=config.keep_alive_timeout,
+        loop=loop)
 
     f = loop.create_server(srv, '0.0.0.0', config.port, reuse_port=True)
     t = loop.run_until_complete(f)

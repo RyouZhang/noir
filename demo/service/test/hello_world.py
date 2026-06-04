@@ -3,7 +3,7 @@ import noir.rule as rule
 import functools
 
 class HelloWorld(router.ServiceHandler):
-    async def process(self, args, context):
+    async def process(self, args, context=None):
         return 'Hello world from HelloWorld', None
 
 router.register_service_handler(
